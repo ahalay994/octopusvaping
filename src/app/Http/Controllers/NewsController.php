@@ -26,6 +26,10 @@ class NewsController extends Controller
         ]);
     }
 
+    public function addView() {
+        return Inertia::render('Admin/News/Add');
+    }
+
     public function editView($id) {
         $news = News::where(['id' => $id])->first();
 
