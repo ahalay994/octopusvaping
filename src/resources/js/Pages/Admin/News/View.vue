@@ -3,10 +3,12 @@
 
     <BreezeAuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Новости
-            </h2>
+            <div class="d-flex justify-content-between">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">Новости</h2>
+                <a :href="route('admin.news.add')">Добавить новость</a>
+            </div>
         </template>
+
 
         <div class="container">
             <div class="row">
@@ -24,7 +26,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <template v-for="item in data">
+                        <template v-for="item in news">
                             <tr>
                                 <th scope="row">{{ item.id }}</th>
                                 <td>{{ item.title }}</td>
@@ -73,14 +75,23 @@ export default {
     props: ['data'],
     data() {
         return {
-            news: [],
+            news: this.data,
         }
     },
     mounted() {},
     methods: {
+        getNews() {
+            axios.get(`/api/news/get-all`)
+            .then(response => {
+                this.news = response.data;
+            });
+        },
+
         deleteNews(id) {
             axios.delete('/api/news/delete/' + id)
-                .then(response => console.log(response))
+                .then(response => {
+                    this.getNews();
+                })
                 .catch(e => console.log(e))
         }
     }

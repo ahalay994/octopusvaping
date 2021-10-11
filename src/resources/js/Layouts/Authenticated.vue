@@ -1,6 +1,8 @@
 <template>
-    <div>
-        <div class="min-h-screen bg-gray-100">
+    <div class="d-flex flex-row">
+        <AdminSidebar />
+
+        <div class="min-h-screen bg-gray-100 w-100">
             <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,6 +22,9 @@
                                 </BreezeNavLink>
                                 <BreezeNavLink :href="route('admin.news.view')" :active="route().current('admin.news.view')">
                                     Новости
+                                </BreezeNavLink>
+                                <BreezeNavLink :href="route('admin.user.view')" :active="route().current('admin.user.view')">
+                                    Пользователи
                                 </BreezeNavLink>
                             </div>
                         </div>
@@ -106,6 +111,7 @@ import BreezeDropdown from '@/Components/Dropdown.vue'
 import BreezeDropdownLink from '@/Components/DropdownLink.vue'
 import BreezeNavLink from '@/Components/NavLink.vue'
 import BreezeResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
+import AdminSidebar from '@/Components/Admin/Sidebar.vue'
 import { Link } from '@inertiajs/inertia-vue3';
 
 export default {
@@ -115,6 +121,7 @@ export default {
         BreezeDropdownLink,
         BreezeNavLink,
         BreezeResponsiveNavLink,
+        AdminSidebar,
         Link,
     },
 
@@ -125,3 +132,7 @@ export default {
     },
 }
 </script>
+
+<style lang="scss">
+
+</style>

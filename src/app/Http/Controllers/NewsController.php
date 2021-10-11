@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use phpDocumentor\Reflection\Types\Boolean;
 
 class NewsController extends Controller
 {
@@ -36,6 +37,16 @@ class NewsController extends Controller
         return Inertia::render('Admin/News/Edit', [
             'data' => $news
         ]);
+    }
+
+    /**
+     * Get all news.
+     *
+     * @return mixed
+     */
+    public function getAll()
+    {
+        return News::all();
     }
 
     /**
@@ -68,8 +79,25 @@ class NewsController extends Controller
      *
      * @return
      */
-    public function edit($id) {
-        dd($id);
+    public function edit(\Illuminate\Http\Request $request) {
+        $images = uploadImage($request, self::FILE_PATH);
+
+        if (!$images) {
+            return [
+                'error' => 'Ошибка с загрузкой изображения'
+            ];
+        }
+        News::where('id', $request->id)
+            ->update([
+                'title' => $request->title,
+                'short_description' => $request->short_description,
+                'description' => $request->description,
+                'image' => $images === true ? $request->image : $images['image'],
+                'image_preview' => $images === true ? $request->image_preview : $images['image_preview'],
+                'updated_at' => date('Y-m-d H:i:s', time())
+        ]);
+
+        return redirect()->route('admin.news.view')->with('status', 'Запись добавлена');
     }
 
     /**
@@ -78,7 +106,10 @@ class NewsController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function delete($id) {
-        News::where(['id' => $id])->delete();
-        return redirect()->route('admin.news.view')->with('status', 'Запись удалена');
+        try {
+            return News::where(['id' => $id])->delete();
+        } catch (\Illuminate\Database\QueryException $exception) {
+            return $exception->errorInfo;
+        }
     }
 }

@@ -22,3 +22,6 @@ Route::get('/', function () {
 require __DIR__.'/auth.php';
 
 require __DIR__.'/admin.php';
+
+//Route::get('/roles', [\App\Http\Controllers\PermissionController::class, 'Permission']);
+

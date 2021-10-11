@@ -95,7 +95,6 @@ export default {
                 onSuccess: (response) => {
                     if (response && response.props && response.props.data) {
                         console.log('response', response.props.data);
-
                     }
                 }
             })
