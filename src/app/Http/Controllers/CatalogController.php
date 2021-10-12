@@ -2,40 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Catalog;
 use App\Models\Category;
+use App\Models\Meta;
 use App\Models\News;
-use http\Env\Request;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use phpDocumentor\Reflection\Types\Boolean;
 
 class CatalogController extends Controller
 {
-    const FILE_PATH = 'images/news/';
+    const FILE_PATH = 'images/catalog/';
 
     /**
-     * All news.
+     * All.
      *
      * @return mixed
      */
     public function store()
     {
-        $news = News::all();
-        return Inertia::render('Admin/News/View', [
-            'data' => $news
+        $catalog = Catalog::all();
+        return Inertia::render('Admin/Catalog/View', [
+            'data' => $catalog
         ]);
     }
 
     public function addView() {
-        return Inertia::render('Admin/News/Add');
+        return Inertia::render('Admin/Catalog/Add');
     }
 
     public function editView($id) {
         $news = News::where(['id' => $id])->first();
 
-        return Inertia::render('Admin/News/Edit', [
+        return Inertia::render('Admin/Catalog/Edit', [
             'data' => $news
         ]);
     }

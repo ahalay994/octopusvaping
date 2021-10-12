@@ -38,7 +38,15 @@ Route::middleware(['auth', 'verified', 'role:developer'])->prefix('admin')->name
         Route::post('/edit/{id}', [\App\Http\Controllers\CategoryController::class, 'edit'])->name('.edit');
     });
 
-    Route::middleware(['auth', 'verified'])->name('catalog')->prefix('/catalog')->group(function () {
-        Route::get('/', [\App\Http\Controllers\CatalogController::class, 'store'])->name('.view');
+    Route::middleware(['auth', 'verified'])->name('catalog.')->prefix('/catalog')->group(function () {
+        Route::get('/', [\App\Http\Controllers\CatalogController::class, 'store'])->name('view');
+        Route::get('/add', [\App\Http\Controllers\CatalogController::class, 'addView'])->middleware('auth')->name('add.view');
+        Route::post('/add', [\App\Http\Controllers\CatalogController::class, 'add'])->middleware('auth')->name('add');
+    });
+
+    Route::middleware(['auth', 'verified'])->name('specification')->prefix('/specification')->group(function () {
+        Route::get('/', [\App\Http\Controllers\SpecificationController::class, 'store'])->name('.view');
+        Route::post('/save', [\App\Http\Controllers\SpecificationController::class, 'save'])->name('.save');
+        Route::post('/delete', [\App\Http\Controllers\SpecificationController::class, 'delete'])->name('.delete');
     });
 });

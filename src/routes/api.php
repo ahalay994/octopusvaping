@@ -37,6 +37,12 @@ Route::group(['middleware' => 'role:developer'], function() {
 Route::prefix('/categories')->name('api.categories.')->group(function () {
     Route::get('/', [\App\Http\Controllers\CategoryController::class, 'getAll'])->name('get');
     Route::get('/{id}', [\App\Http\Controllers\CategoryController::class, 'getAllEdit'])->name('get.edit');
-    Route::post('/add', [\App\Http\Controllers\CategoryController::class, 'add'])->name('.add');
+    Route::post('/add', [\App\Http\Controllers\CategoryController::class, 'add'])->name('add');
     Route::delete('/delete/{id}', [\App\Http\Controllers\CategoryController::class, 'delete'])->name('delete');
+});
+
+Route::prefix('/specification')->name('api.specification.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\SpecificationController::class, 'get'])->name('get');
+    Route::post('/save', [\App\Http\Controllers\SpecificationController::class, 'save'])->name('save');
+    Route::delete('/delete/{id}', [\App\Http\Controllers\SpecificationController::class, 'delete'])->name('delete');
 });

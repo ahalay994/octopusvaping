@@ -49,6 +49,11 @@ export default {
                     link: 'admin.catalog.view',
                     icon: ''
                 },
+                {
+                    title: 'Характеристики',
+                    link: 'admin.specification.view',
+                    icon: ''
+                },
             ]
         }
     }
