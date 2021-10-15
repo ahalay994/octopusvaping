@@ -21,7 +21,7 @@ class CategoryController extends Controller
      */
     public function store()
     {
-        $categories = Category::orderBy('deep', 'asc')->get();
+        $categories = Category::get();
         $data = [];
         foreach ($categories as $category) {
             $parentCategory = Category::where(['id' => $category->parent_id])->first();

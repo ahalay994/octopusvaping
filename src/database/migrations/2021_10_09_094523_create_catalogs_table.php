@@ -20,8 +20,11 @@ class CreateCatalogsTable extends Migration
             $table->integer('category_id');
             $table->text('description');
             $table->text('short_description');
-            $table->text('image')->nullable();
-            $table->text('preview_image')->nullable();
+            $table->string('image')->nullable();
+            $table->string('preview_image')->nullable();
+            $table->integer('manufacturer_id');
+            $table->double('price');
+            $table->double('price_old')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

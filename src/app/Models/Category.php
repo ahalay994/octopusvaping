@@ -30,4 +30,8 @@ class Category extends Model
             ]
         ];
     }
+
+    public function getName() {
+        return self::pluck('name', 'id');
+    }
 }

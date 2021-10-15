@@ -4,6 +4,9 @@ import { createApp, h, VueElement } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import { InertiaProgress } from '@inertiajs/progress';
 
+import 'vue-search-select/dist/VueSearchSelect.css'
+import '@vueform/multiselect/themes/default.css'
+
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
 createInertiaApp({

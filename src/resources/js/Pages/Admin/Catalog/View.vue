@@ -20,21 +20,25 @@
                             <th scope="col">Наименование</th>
                             <th scope="col">Краткое описание</th>
                             <th scope="col">Описание</th>
-                            <th scope="col">Изображение</th>
+                            <th scope="col">Изображения</th>
                             <th scope="col">Превью-изображение</th>
                             <th scope="col">Категория</th>
                             <th scope="col"></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <template v-for="item in news">
+                        <template v-for="item in data">
                             <tr>
                                 <th scope="row">{{ item.id }}</th>
                                 <td>{{ item.name }}</td>
                                 <td>{{ item.short_description }}</td>
                                 <td>{{ item.description }}</td>
-                                <td><img v-if="item.image" :src="'/images/category/' + item.image" width="100"/></td>
-                                <td><img v-if="item.image_preview" :src="'/images/category/' + item.image_preview" width="100"/></td>
+                                <td>
+                                    <div v-if="item.images && item.images.length > 0" v-for="image in item.images" class="d-flex">
+                                        <img :src="'/images/catalog/' + image.name" width="50"/>
+                                    </div>
+                                </td>
+                                <td><img v-if="item.preview_image" :src="'/images/catalog/' + item.preview_image" width="50"/></td>
                                 <td>{{ item.category_id }}</td>
                                 <td>
                                     <div class="dropdown">
@@ -43,12 +47,12 @@
                                                 aria-expanded="false"></button>
                                         <ul class="dropdown-menu" aria-labelledby="actions">
                                             <li>
-<!--                                                <BreezeNavLink :href="route('admin.news.edit', item.id)">-->
-<!--                                                    Редактировать-->
-<!--                                                </BreezeNavLink>-->
+                                                <BreezeNavLink :href="route('admin.catalog.edit', item.id)">
+                                                    Редактировать
+                                                </BreezeNavLink>
                                             </li>
                                             <li>
-<!--                                                <a @click="deleteNews(item.id)">Удалить</a>-->
+                                                <a @click="deleteItem(item.id)">Удалить</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -81,6 +85,9 @@ export default {
     },
     mounted() {},
     methods: {
+        deleteItem(id) {
+
+        }
     }
 }
 </script>

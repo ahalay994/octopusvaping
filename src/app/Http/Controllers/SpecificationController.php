@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Specification;
 use Inertia\Inertia;
+use \Illuminate\Http\Request;
+use \Illuminate\Database\QueryException;
 
 class SpecificationController extends Controller
 {
@@ -47,7 +49,25 @@ class SpecificationController extends Controller
         return $data;
     }
 
-    public function save(\Illuminate\Http\Request $request) {
+    /**
+     * Get all.
+     *
+     * @return mixed
+     */
+    public function getNames()
+    {
+        $specifications = Specification::all();
+        $data = [];
+        foreach ($specifications as $specification) {
+            array_push($data, [
+                'value' => $specification->id,
+                'label' => $specification->name
+            ]);
+        }
+        return $data;
+    }
+
+    public function save(Request $request) {
         $specifications = $request->specifications;
         foreach ($specifications as $specification) {
             if ($specification['name'] === null || $specification['name'] === '') {
@@ -74,7 +94,7 @@ class SpecificationController extends Controller
     public function delete($id) {
         try {
             return Specification::where(['id' => $id])->delete();
-        } catch (\Illuminate\Database\QueryException $exception) {
+        } catch (QueryException $exception) {
             return $exception->errorInfo;
         }
     }
