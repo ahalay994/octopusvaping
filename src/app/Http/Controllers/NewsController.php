@@ -3,16 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
-use http\Env\Request;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use phpDocumentor\Reflection\Types\Boolean;
 
 class NewsController extends Controller
 {
     const FILE_PATH = 'images/news/';
+    private $errors = [];
 
     /**
      * All news.
@@ -33,9 +29,18 @@ class NewsController extends Controller
 
     public function editView($id) {
         $news = News::where(['id' => $id])->first();
+        $data = [
+            'id' => $news['id'],
+            'title' => $news['title'],
+            'short_description' => $news['short_description'],
+            'description' => $news['description'],
+            'image' => '/' . self::FILE_PATH . $news['image'],
+            'image_preview' => '/' . self::FILE_PATH . $news['image_preview'],
+        ];
+
 
         return Inertia::render('Admin/News/Edit', [
-            'data' => $news
+            'data' => $data
         ]);
     }
 
@@ -53,7 +58,7 @@ class NewsController extends Controller
      * Add new news.
      *
      * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse|string[]
+     * @return array[]|\Illuminate\Http\RedirectResponse|string[]
      */
     public function add(\Illuminate\Http\Request $request) {
         $images = uploadImage($request, self::FILE_PATH);
@@ -63,6 +68,7 @@ class NewsController extends Controller
                 'error' => 'Ошибка с загрузкой изображения'
             ];
         }
+
         $news = News::create([
             'title' => $request->title,
             'short_description' => $request->short_description,
@@ -82,20 +88,24 @@ class NewsController extends Controller
     public function edit(\Illuminate\Http\Request $request) {
         $images = uploadImage($request, self::FILE_PATH);
 
+        $dataSave = [
+            'title' => $request->title,
+            'short_description' => $request->short_description,
+            'description' => $request->description,
+            'updated_at' => date('Y-m-d H:i:s', time())
+        ];
+
+        if (gettype($images) !== 'boolean') {
+            if (isset($images['image'])) $dataSave['image'] = $images['image'];
+            if (isset($images['image_preview'])) $dataSave['image_preview'] = $images['image_preview'];
+        }
+
         if (!$images) {
             return [
                 'error' => 'Ошибка с загрузкой изображения'
             ];
         }
-        News::where('id', $request->id)
-            ->update([
-                'title' => $request->title,
-                'short_description' => $request->short_description,
-                'description' => $request->description,
-                'image' => $images === true ? $request->image : $images['image'],
-                'image_preview' => $images === true ? $request->image_preview : $images['image_preview'],
-                'updated_at' => date('Y-m-d H:i:s', time())
-        ]);
+        News::where('id', $request->id)->update($dataSave);
 
         return redirect()->route('admin.news.view')->with('status', 'Запись добавлена');
     }
@@ -111,5 +121,24 @@ class NewsController extends Controller
         } catch (\Illuminate\Database\QueryException $exception) {
             return $exception->errorInfo;
         }
+    }
+
+    function validateFields($request) {
+        $errors = [];
+        $fields = [
+            'title' => 'Заголовок',
+            'short_description' => 'Краткое описание',
+            'description' => 'Описание',
+            'image' => 'Изображение',
+            'image_preview' => 'Превью-изображение',
+        ];
+
+        foreach ($fields as $field => $name) {
+            if ($request[$field] === null) {
+                $errors[$field] = `Поле "${name}" обязатель для заполнения`;
+            }
+        }
+
+        return $errors;
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Permissions\HasPermissionsTrait;
 
-class UserPermission extends Model
+class UserRole extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -18,11 +18,11 @@ class UserPermission extends Model
      * @var string[]
      */
 
-    protected $table = 'users_permissions';
+    protected $table = 'users_roles';
 
     protected $fillable = [
         'id',
         'user_id',
-        'permission_id'
+        'role_id'
     ];
 }

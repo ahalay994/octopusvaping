@@ -52,7 +52,7 @@
                                                 </BreezeNavLink>
                                             </li>
                                             <li>
-                                                <a @click="deleteItem(item.id)">Удалить</a>
+                                                <a class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out" @click="deleteItem(item.id)">Удалить</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -91,3 +91,24 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+th, td {
+    vertical-align: middle;
+}
+.dropdown-menu {
+    padding: 0;
+    a {
+        display: block;
+        width: 100%;
+        padding: 10px !important;
+        text-decoration: none;
+        font-size: 16px;
+        color: black;
+        cursor: pointer;
+        &:hover {
+            border: 1px solid rgba(209, 213, 219, var(--tw-border-opacity));
+        }
+    }
+}
+</style>

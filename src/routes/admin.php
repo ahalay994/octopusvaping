@@ -5,6 +5,7 @@ use \App\Http\Controllers\UserController;
 use \App\Http\Controllers\CategoryController;
 use \App\Http\Controllers\SpecificationController;
 use \App\Http\Controllers\CatalogController;
+use \App\Http\Controllers\ManufacturerController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -30,16 +31,17 @@ Route::middleware(['auth', 'verified', 'role:developer'])->prefix('admin')->name
         Route::get('/edit/{id}', [UserController::class, 'editUserView'])->name('.edit.view');
         Route::post('/edit/{id}', [UserController::class, 'editUser'])->name('.edit');
         Route::post('/delete/{id}', [UserController::class, 'deleteUser'])->name('.delete');
-        Route::get('/permission/{id}', [UserController::class, 'editPermissionView'])->name('.permission.view');
-        Route::post('/permission/{id}', [UserController::class, 'editPermission'])->name('.permission.edit');
+        Route::get('/role/{id}', [UserController::class, 'editRoleView'])->name('.role.view');
+        Route::post('/role/{id}', [UserController::class, 'editRole'])->name('.role.edit');
     });
 
-    Route::middleware(['auth', 'verified'])->name('category')->prefix('/categories')->group(function () {
+    Route::middleware(['auth', 'verified'])->name('category')->prefix('/category')->group(function () {
         Route::get('/', [CategoryController::class, 'store'])->name('.view');
         Route::get('/add', [CategoryController::class, 'addView'])->name('.add.view');
         Route::post('/add', [CategoryController::class, 'add'])->name('.add');
         Route::get('/edit/{id}', [CategoryController::class, 'editView'])->name('.edit.view');
         Route::post('/edit/{id}', [CategoryController::class, 'edit'])->name('.edit');
+        Route::delete('/delete{id}', [CategoryController::class, 'delete'])->name('.delete');
     });
 
     Route::middleware(['auth', 'verified'])->name('specification')->prefix('/specification')->group(function () {
@@ -58,10 +60,11 @@ Route::middleware(['auth', 'verified', 'role:developer'])->prefix('admin')->name
     });
 
     Route::name('manufacturer')->prefix('/manufacturer')->group(function () {
-        Route::get('/', [\App\Http\Controllers\ManufacturerController::class, 'store'])->name('.view');
-        Route::get('/add', [\App\Http\Controllers\ManufacturerController::class, 'addView'])->name('.add.view');
-        Route::post('/add', [\App\Http\Controllers\ManufacturerController::class, 'add'])->name('.add');
-        Route::get('/edit/{id}', [\App\Http\Controllers\ManufacturerController::class, 'editView'])->name('.edit.view');
-        Route::post('/edit/{id}', [\App\Http\Controllers\ManufacturerController::class, 'edit'])->name('.edit');
+        Route::get('/', [ManufacturerController::class, 'store'])->name('.view');
+        Route::get('/add', [ManufacturerController::class, 'addView'])->name('.add.view');
+        Route::post('/add', [ManufacturerController::class, 'add'])->name('.add');
+        Route::get('/edit/{id}', [ManufacturerController::class, 'editView'])->name('.edit.view');
+        Route::post('/edit/{id}', [ManufacturerController::class, 'edit'])->name('.edit');
+        Route::delete('/delete/{id}', [ManufacturerController::class, 'delete'])->name('.delete');
     });
 });

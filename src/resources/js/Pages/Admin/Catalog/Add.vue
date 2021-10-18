@@ -3,12 +3,12 @@
 
     <BreezeAuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Добавить продукцию
-            </h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-0">Добавить продукцию</h2>
         </template>
 
-        <div class="container">
+        <div class="py-12">
+            <div class="mx-auto sm:px-6 lg:px-8">
+                <div class="container bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border-b border-gray-200">
             <div class="row">
                 <div class="col-12">
 
@@ -127,6 +127,8 @@
                     </form>
 
                 </div>
+            </div>
+        </div>
             </div>
         </div>
 

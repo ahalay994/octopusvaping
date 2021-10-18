@@ -3,14 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\News;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
-use phpDocumentor\Reflection\Types\Boolean;
-use voku\helper\ASCII;
 
 class CategoryController extends Controller
 {
@@ -21,6 +15,12 @@ class CategoryController extends Controller
      */
     public function store()
     {
+        return Inertia::render('Admin/Categories/View', [
+            'data' => self::get()
+        ]);
+    }
+
+    public function get() {
         $categories = Category::get();
         $data = [];
         foreach ($categories as $category) {
@@ -31,13 +31,10 @@ class CategoryController extends Controller
                 'slug' => $category->slug,
                 'deep' => $category->deep,
                 'parent_id' => $parentCategory ? $parentCategory->name : null,
-                'state' => 'view',
-                'categories' => self::getAllEdit($category->id)
             ]);
         }
-        return Inertia::render('Admin/Categories/View', [
-            'data' => $data
-        ]);
+
+        return $data;
     }
 
     public function addView() {
@@ -90,7 +87,7 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\RedirectResponse|string[]
      */
     public function add(\Illuminate\Http\Request $request) {
-        $category = Category::create([
+        Category::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'parent_id' => $request->parent_id ?: null,

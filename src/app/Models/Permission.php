@@ -9,6 +9,17 @@ class Permission extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'id',
+        'name',
+        'slug',
+    ];
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
+    ];
+
     public function roles() {
 
         return $this->belongsToMany(Role::class,'roles_permissions');

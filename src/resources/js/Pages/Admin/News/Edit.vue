@@ -3,52 +3,57 @@
 
     <BreezeAuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Редактировать новость {{ data.id }}
-            </h2>
+            <div class="d-flex align-items-center">
+                <Link :href="route('admin.news.view')" class="d-block">
+                    <div class="icon">
+                        <BIconChevronLeft />
+                    </div>
+                </Link>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-0">
+                    Редактировать новость #{{ data.id }}
+                </h2>
+            </div>
         </template>
-        <div class="container">
-            <div class="row">
-            <div class="col-12">
+
+        <div class="mx-auto sm:px-6 py-12">
+            <div class="bg-white shadow-sm sm:rounded-lg p-6 border-b border-gray-200">
 
                 <BreezeValidationErrors class="mb-4" />
 
-                <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-                    {{ status }}
-                </div>
                 <form @submit.prevent="submit" enctype="multipart/form-data">
-                    <div>
+                    <div class="mb-3">
                         <BreezeLabel for="title" value="Заголовок" />
                         <BreezeInput id="title" type="text" class="mt-1 block w-full" v-model="form.title" autofocus />
                     </div>
 
-                    <div>
+                    <div class="mb-3">
                         <BreezeLabel for="short_description" value="Краткое описание" />
                         <BreezeTextarea id="short_description" type="text" class="mt-1 block w-full" v-model="form.short_description" />
                     </div>
 
-                    <div>
+                    <div class="mb-3">
                         <BreezeLabel for="description" value="Описание" />
                         <BreezeTextarea id="description" type="text" class="mt-1 block w-full" v-model="form.description" />
                     </div>
 
-                    <div>
-                        <img :src="'/images/news/' + data.image" width="200">
-                        <input type="file" @input="uploadImage($event, 'image')" name="image" ref="image" />
+                    <div class="mb-3">
+                        <BreezeLabel value="Изображение" />
+                        <label class="upload-image" for="image" :style="`background-image: url('${data.image}')`" />
+                        <input id="image" type="file" @input="uploadImage($event, 'image')" name="image" ref="image" hidden />
                     </div>
 
-                    <div>
-                        <img :src="'/images/news/' + data.image_preview" width="200">
-                        <input type="file" @input="uploadImage($event, 'image_preview')" name="image_preview" ref="image_preview" />
+                    <div class="mb-3">
+                        <BreezeLabel value="Превью-изображение" />
+                        <label class="upload-image" for="image-preview" :style="`background-image: url('${data.image_preview}')`" />
+                        <input id="image-preview" type="file" @input="uploadImage($event, 'image_preview')" name="image_preview" ref="image_preview" hidden />
                     </div>
 
                     <div class="flex items-center justify-end mt-4">
-                        <BreezeButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">Редактировать</BreezeButton>
+                        <BreezeButton class="ml-4 btn btn-success" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">Редактировать</BreezeButton>
                     </div>
                 </form>
 
             </div>
-        </div>
         </div>
 
     </BreezeAuthenticatedLayout>
@@ -56,26 +61,25 @@
 
 <script>
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
-import {Head, Link, useForm} from '@inertiajs/inertia-vue3';
+import {Head, Link} from '@inertiajs/inertia-vue3';
 import BreezeButton from "@/Components/Button";
-import BreezeCheckbox from "@/Components/Checkbox";
 import BreezeInput from "@/Components/Input";
 import BreezeTextarea from "@/Components/Textarea";
 import BreezeLabel from "@/Components/Label";
 import BreezeValidationErrors from "@/Components/ValidationErrors";
+import { BIconChevronLeft } from 'bootstrap-icons-vue';
 
 export default {
     components: {
         BreezeAuthenticatedLayout,
         BreezeButton,
-        BreezeCheckbox,
         BreezeInput,
         BreezeTextarea,
         BreezeLabel,
         BreezeValidationErrors,
         Head,
         Link,
-        useForm,
+        BIconChevronLeft,
     },
 
     props: ['data'],
@@ -91,7 +95,7 @@ export default {
     mounted() {},
     methods: {
         submit() {
-            this.form.post(`/api/news/edit/${this.data.id}`, {
+            this.form.post(this.route('admin.news.edit', this.data.id), {
                 onSuccess: (response) => {
                     if (response && response.props && response.props.data) {
                         console.log('response', response.props.data);
@@ -100,8 +104,56 @@ export default {
             })
         },
         uploadImage(e, fieldName) {
-            this.form[fieldName] = e.target.files[0]
-        }
+            const file = e.target.files[0];
+            this.form[fieldName] = file;
+
+            let reader = new FileReader
+            reader.onload = e => {
+                this.data[fieldName] = e.target.result
+            }
+            reader.readAsDataURL(file)
+        },
     }
 }
 </script>
+
+<style lang="scss">
+.icon {
+    font-size: 20px;
+    color: black;
+    padding: 10px 0;
+    margin-right: 10px;
+}
+.upload-image {
+    width: 200px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: all .2s ease-in-out;
+    border-radius: 4px;
+    overflow: hidden;
+    &::before {
+        opacity: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        content: 'Загрузить изображение';
+        color: black;
+        position: absolute;
+        inset: 0;
+        background-color: rgba(255, 255, 255, 0.5);
+        transition: all .2s ease-in-out;
+    }
+    &:hover {
+        &::before {
+            opacity: 1;
+        }
+    }
+}
+</style>

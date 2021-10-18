@@ -7,11 +7,15 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserPermission;
+use App\Models\UserRole;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use phpDocumentor\Reflection\Types\Boolean;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+use \Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -22,9 +26,8 @@ class UserController extends Controller
      */
     public function store()
     {
-        $user = User::all();
         return Inertia::render('Admin/User/View', [
-            'data' => $user
+            'data' => self::getUsers()
         ]);
     }
 
@@ -42,17 +45,45 @@ class UserController extends Controller
 
     public function getUsers()
     {
-        return User::all();
+        $usersDB = User::all();
+        $users = [];
+        $roles = Role::pluck('name', 'id');
+        $userRoles = UserRole::pluck('role_id', 'user_id');
+
+        foreach ($usersDB as $user) {
+            array_push($users, [
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'email_verified_at' => $user['email_verified_at'],
+                'role' => $roles[$userRoles[$user['id']]]
+            ]);
+        }
+
+        return $users;
     }
 
-    public function addUser(\Illuminate\Http\Request $request) {
+    /**
+     * Handle an incoming registration request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function addUser(Request $request) {
         $userRole = Role::where('slug','user')->first();
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = $request->password;
-        $user->save();
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
         $user->roles()->attach($userRole);
 
         return redirect()->route('admin.user.view')->with('status', 'Пользователь добавлен');
@@ -63,10 +94,15 @@ class UserController extends Controller
      *
      * @return
      */
-    public function editUser(\Illuminate\Http\Request $request) {
-        $user = User::where(['id' => $request->id]);
+    public function editUser(Request $request) {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+        ]);
+
+        $user = User::where(['id' => $request->id])->first();
         $user->name = $request->name;
-        $user->password = $request->password;
+        $user->password = $request->password ? Hash::make($request->password) : $user->password;
         $user->update();
 
         return redirect()->route('admin.user.view')->with('status', 'Пользователь изменён');
@@ -89,16 +125,33 @@ class UserController extends Controller
         return false;
     }
 
-    public function editPermissionView($id) {
-        $userPermission = UserPermission::where(['user_id' => $id])->all();
+    public function editRoleView($id) {
+        $userRole = UserRole::where(['user_id' => $id])->first();
+        $user = User::where(['id' => $userRole->user_id])->first();
+        $rolesDB = Role::all();
+        $roles = [];
+        foreach ($rolesDB as $role) {
+            array_push($roles, [
+                'value' => $role['id'],
+                'label' => $role['name'],
+            ]);
+        }
 
-        return Inertia::render('Admin/User/Permission/Edit', [
-            'data' => $userPermission
+        return Inertia::render('Admin/User/Role/Edit', [
+            'data' => [
+                'user' => $user,
+                'role' => $userRole->role_id,
+                'roles' => $roles
+            ]
         ]);
     }
 
-    public function editPermission(\Illuminate\Http\Request $request) {
+    public function editRole(\Illuminate\Http\Request $request) {
+        $userRole = UserRole::where(['user_id' => $request->user['id']])->first();
+        $userRole->role_id = $request->role;
+        $userRole->update();
 
+        return redirect()->route('admin.user.view')->with('status', 'Роль изменена');
     }
 
     public function getPermissions()

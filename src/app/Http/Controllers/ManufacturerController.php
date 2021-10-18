@@ -24,7 +24,7 @@ class ManufacturerController extends Controller
             array_push($data, [
                 'id' => $manufacturer->id,
                 'name' => $manufacturer->name,
-                'image' => '/' . self::FILE_PATH . $manufacturer->image,
+                'image' => $manufacturer->image,
                 'state' => 'view',
             ]);
         }
@@ -46,7 +46,7 @@ class ManufacturerController extends Controller
             array_push($data, [
                 'id' => $manufacturer->id,
                 'name' => $manufacturer->name,
-                'image' => '/' . self::FILE_PATH . $manufacturer->image,
+                'image' => $manufacturer->image,
                 'state' => 'view',
             ]);
         }
@@ -72,7 +72,6 @@ class ManufacturerController extends Controller
     }
 
     public function save(Request $request) {
-//        dd($request->file());
         $images = uploadImageTable($request, self::FILE_PATH, 'manufacturers');
 
         if (!$images) {
@@ -92,7 +91,9 @@ class ManufacturerController extends Controller
                 Manufacturer::where(['id' => $manufacturer['id']])
                     ->update([
                         'name' => $manufacturer['name'],
-                        'image' => $images && $images[$manufacturer['id']] ? $images[$manufacturer['id']] : $manufacturer->image
+                        'image' => (gettype($images) !== 'boolean' && count($images) > 0 && $images[$manufacturer['id']])
+                            ? $images[$manufacturer['id']]
+                            : $manufacturer['image']
                     ]);
 
             }

@@ -3,47 +3,49 @@
 
     <BreezeAuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Редактировать категорию {{ data.id }}
-            </h2>
+            <div class="d-flex align-items-center">
+                <Link :href="route('admin.category.view')" class="d-block">
+                    <div class="icon">
+                        <BIconChevronLeft />
+                    </div>
+                </Link>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-0">
+                    Редактировать категорию #{{ data.id }}
+                </h2>
+            </div>
         </template>
-        <div class="container">
-            <div class="row">
-            <div class="col-12">
+
+        <div class="mx-auto sm:px-6 py-12">
+            <div class="bg-white shadow-sm sm:rounded-lg p-6 border-b border-gray-200">
 
                 <BreezeValidationErrors class="mb-4" />
 
-                <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-                    {{ status }}
-                </div>
                 <form @submit.prevent="submit" enctype="multipart/form-data">
-                    <div>
+                    <div class="mb-3">
                         <BreezeLabel for="name" value="Наименование" />
                         <BreezeInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" autofocus />
                     </div>
 
-                    <div>
+                    <div class="mb-3">
                         <BreezeLabel for="deep" value="Глубина" />
                         <BreezeInput id="deep" type="text" class="mt-1 block w-full" v-model="form.deep" />
                     </div>
 
                     <div>
                         <BreezeLabel for="parent_id" value="Родительский компонент" />
-                        <select v-if="categories" v-model="form.parent_id">
-                            <option></option>
-                            <template v-for="(category, index) in categories">
-                                <option :value="index">{{category}}</option>
-                            </template>
-                        </select>
+                        <Multiselect
+                            id="parent_id"
+                            v-model="form.parent_id"
+                            :options="categories"
+                        />
                     </div>
 
                     <div class="flex items-center justify-end mt-4">
-                        <BreezeButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">Редактировать</BreezeButton>
+                        <BreezeButton class="ml-4 btn btn-success" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">Редактировать</BreezeButton>
                     </div>
                 </form>
 
             </div>
-        </div>
         </div>
 
     </BreezeAuthenticatedLayout>
@@ -51,28 +53,25 @@
 
 <script>
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue'
-import {Head, Link, useForm} from '@inertiajs/inertia-vue3';
+import {Head, Link} from '@inertiajs/inertia-vue3';
 import BreezeButton from "@/Components/Button";
-import BreezeCheckbox from "@/Components/Checkbox";
 import BreezeInput from "@/Components/Input";
-import BreezeTextarea from "@/Components/Textarea";
 import BreezeLabel from "@/Components/Label";
 import BreezeValidationErrors from "@/Components/ValidationErrors";
-import BreezeDropdown from "@/Components/Dropdown";
+import Multiselect from '@vueform/multiselect'
+import { BIconChevronLeft } from 'bootstrap-icons-vue';
 
 export default {
     components: {
         BreezeAuthenticatedLayout,
         BreezeButton,
-        BreezeCheckbox,
         BreezeInput,
-        BreezeTextarea,
         BreezeLabel,
         BreezeValidationErrors,
-        BreezeDropdown,
         Head,
         Link,
-        useForm,
+        Multiselect,
+        BIconChevronLeft,
     },
 
     props: ['data'],
@@ -91,7 +90,7 @@ export default {
     },
     methods: {
         getCategories() {
-            axios.get(`/api/categories/` + this.data.id)
+            axios.get(this.route('api.category.get.all', this.data.id))
                 .then(response => {
                     this.categories = response.data;
                 });
@@ -99,7 +98,7 @@ export default {
 
         submit() {
             console.log(this.form);
-            this.form.post(`/admin/categories/edit/${this.data.id}`, {
+            this.form.post(this.route('admin.category.edit', this.data.id), {
                 onSuccess: (response) => {
                     if (response && response.props && response.props.data) {
                         console.log('response', response.props.data);
@@ -110,3 +109,12 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+.icon {
+    font-size: 20px;
+    color: black;
+    padding: 10px 0;
+    margin-right: 10px;
+}
+</style>
