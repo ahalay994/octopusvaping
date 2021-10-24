@@ -69,7 +69,15 @@
                                             <Multiselect
                                                 id="manufacturer"
                                                 v-model="form.manufacturer"
-                                                :options="manufacturers"
+                                                placeholder="Выберите производителя"
+                                                :filterResults="false"
+                                                :minChars="0"
+                                                :resolveOnLoad="false"
+                                                :delay="0"
+                                                :searchable="true"
+                                                :options="async function(query) {
+                                                    return await fetchManufacturers(query)
+                                                }"
                                             />
                                         </div>
                                         <div class="mb-3">
@@ -77,7 +85,15 @@
                                             <Multiselect
                                                 id="category"
                                                 v-model="form.category"
-                                                :options="categories"
+                                                placeholder="Выберите категорию"
+                                                :filterResults="false"
+                                                :minChars="0"
+                                                :resolveOnLoad="false"
+                                                :delay="0"
+                                                :searchable="true"
+                                                :options="async function(query) {
+                                                    return await fetchCategories(query)
+                                                }"
                                             />
                                         </div>
                                         <div class="mb-3">
@@ -110,7 +126,15 @@
                                                     <Multiselect
                                                         v-if="form.specifications[index]"
                                                         v-model="form.specifications[index].name"
-                                                        :options="specifications"
+                                                        placeholder="Выберите характеристику"
+                                                        :filterResults="false"
+                                                        :minChars="0"
+                                                        :resolveOnLoad="false"
+                                                        :delay="0"
+                                                        :searchable="true"
+                                                        :options="async function(query) {
+                                                            return await fetchSpecifications(query)
+                                                        }"
                                                     />
                                                 </div>
                                                 <div class="col-6 d-flex">
@@ -275,7 +299,34 @@ export default {
             })
         },
         deleteSpecification(id) {
-            this.form.specifications.splice(1, 1);
+            this.form.specifications.splice(parseInt(id), 1);
+        },
+        async fetchManufacturers(query) {
+            let data = [];
+            this.manufacturers.forEach(item => {
+                if (item.label.toLowerCase().indexOf(query.toLowerCase()) > -1) {
+                    data.push(item);
+                }
+            });
+            return data;
+        },
+        async fetchCategories(query) {
+            let data = [];
+            this.categories.forEach(item => {
+                if (item.label.toLowerCase().indexOf(query.toLowerCase()) > -1) {
+                    data.push(item);
+                }
+            });
+            return data;
+        },
+        async fetchSpecifications(query) {
+            let data = [];
+            this.specifications.forEach(item => {
+                if (item.label.toLowerCase().indexOf(query.toLowerCase()) > -1) {
+                    data.push(item);
+                }
+            });
+            return data;
         },
     }
 }

@@ -22,9 +22,6 @@ class CreateUsersPermissionsTable extends Migration
             //FOREIGN KEY CONSTRAINTS
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('permission_id')->references('id')->on('permissions')->onDelete('cascade');
-
-            //SETTING THE PRIMARY KEYS
-            $table->primary(['user_id','permission_id']);
         });
     }
 

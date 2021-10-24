@@ -43,50 +43,56 @@ export default {
     props: ['state'],
     data() {
         return {
-            menu: [
-                {
-                    title: 'Администрирование',
-                    children: [
-                        {
-                            title: 'Пользователи',
-                            link: 'admin.user.view',
-                            icon: ''
-                        },
-                    ]
-                },
-                {
-                    title: 'Параметры',
-                    children: [
-                        {
-                            title: 'Категории',
-                            link: 'admin.category.view',
-                            icon: ''
-                        },
-                        {
-                            title: 'Характеристики',
-                            link: 'admin.specification.view',
-                            icon: ''
-                        },
-                        {
-                            title: 'Производители',
-                            link: 'admin.manufacturer.view',
-                            icon: ''
-                        },
-                    ]
-                },
-                {
-                    title: 'Новости',
-                    link: 'admin.news.view',
-                    icon: ''
-                },
-                {
-                    title: 'Каталог',
-                    link: 'admin.catalog.view',
-                    icon: ''
-                },
-
-            ]
+            menu: []
         }
+    },
+    mounted() {
+        this.menu = [];
+        const roles = this.$page.props.auth.user.roles.find(role => role.slug === 'admin') || this.$page.props.auth.user.roles.find(role => role.slug === 'developer');
+        if (roles !== undefined) {
+            this.menu.push({
+                title: 'Администрирование',
+                children: [
+                    {
+                        title: 'Пользователи',
+                        link: 'admin.user.view',
+                        icon: ''
+                    },
+                ]
+            });
+        }
+        this.menu.push(
+            {
+                title: 'Параметры',
+                children: [
+                    {
+                        title: 'Категории',
+                        link: 'admin.category.view',
+                        icon: ''
+                    },
+                    {
+                        title: 'Характеристики',
+                        link: 'admin.specification.view',
+                        icon: ''
+                    },
+                    {
+                        title: 'Производители',
+                        link: 'admin.manufacturer.view',
+                        icon: ''
+                    },
+                ]
+            },
+            {
+                title: 'Новости',
+                link: 'admin.news.view',
+                icon: ''
+            },
+            {
+                title: 'Каталог',
+                link: 'admin.catalog.view',
+                icon: ''
+            },
+        );
     }
 }
 </script>

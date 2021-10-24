@@ -21,19 +21,28 @@ class CatalogController extends Controller
     public function get() {
         $catalog = Catalog::all();
         $categories = (new CategoryController)->getNames();
-        $manufacturer = (new ManufacturerController())->getNames();
+        $manufacturers = (new ManufacturerController())->getNames();
         $data = [];
         foreach ($catalog as $item) {
+            $categoryId = $item->category_id;
+            $category = array_filter($categories, function ($elem) use ($categoryId) {
+                return array_key_exists('value', $elem) and $elem['value'] === $categoryId;
+            });
+            $manufacturerId = $item->manufacturer_id;
+            $manufacturer = array_filter($manufacturers, function ($elem) use ($manufacturerId) {
+                return array_key_exists('value', $elem) and $elem['value'] === $manufacturerId;
+            });
+
             array_push($data, [
                 'id' => $item->id,
                 'name' => $item->name,
                 'slug' => $item->slug,
-                'category_id' => $categories[$item->category_id],
+                'category_id' => $category[0]['label'],
                 'description' => $item->description,
                 'short_description' => $item->short_description,
                 'images' => Image::where(['model_type' => self::TYPE_MODEL, 'model_id' => $item->id])->get(),
                 'image_preview' => $item->image_preview,
-                'manufacturer_id' => $manufacturer[$item->manufacturer_id]['label'] ?? '',
+                'manufacturer_id' => $manufacturer ? $manufacturer[0]['label'] : '',
                 'price' => $item->price,
                 'price_old' => $item->price_old,
             ]);

@@ -56,7 +56,15 @@ class CategoryController extends Controller
      */
     public function getNames()
     {
-        return Category::pluck('name', 'id');
+        $categoriesDB = Category::all();
+        $categories = [];
+        foreach ($categoriesDB as $item) {
+            array_push($categories, [
+                'value' => $item['id'],
+                'label' => $item['name']
+            ]);
+        }
+        return $categories;
     }
 
     public function getAllEdit($id)
