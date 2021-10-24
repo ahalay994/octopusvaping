@@ -8,7 +8,6 @@ use Inertia\Inertia;
 class NewsController extends Controller
 {
     const FILE_PATH = 'images/news/';
-    private $errors = [];
 
     /**
      * All news.
@@ -38,6 +37,7 @@ class NewsController extends Controller
             'image_url' => $news['image'] ? [$news['image']] : [],
             'image_preview' => [],
             'image_preview_url' => $news['image_preview'] ? [$news['image_preview']] : [],
+            'visible' => $news['visible'],
             'dir_image' => self::FILE_PATH,
         ];
 
@@ -77,6 +77,8 @@ class NewsController extends Controller
             'description' => $request->description,
             'image' => $images === true ? null : $images['image'][0],
             'image_preview' => $images === true ? null : $images['image_preview'][0],
+            'visible' => $request->visible === true || intval($request->visible) === 1 ? 1 : 0,
+            'created_at' => date('Y-m-d H:i:s', time()),
         ]);
 
         return redirect()->route('admin.news.view')->with('status', 'Запись добавлена');
@@ -101,6 +103,7 @@ class NewsController extends Controller
             'description' => $request->description,
             'image' => gettype($images) === 'boolean' || !isset($images['image']) ? $news['image'] : $images['image'][0],
             'image_preview' => gettype($images) === 'boolean' || !isset($images['image_preview']) ? $news['image_preview'] : $images['image_preview'][0],
+            'visible' => $request->visible === true || intval($request->visible) === 1 ? 1 : 0,
             'updated_at' => date('Y-m-d H:i:s', time()),
         ]);
 

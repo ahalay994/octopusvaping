@@ -33,6 +33,12 @@
                         <div class="tab-content py-4" id="nav-tabContent">
                             <div class="tab-pane fade show active" id="nav-main" role="tabpanel"
                                  aria-labelledby="nav-main-tab">
+
+                                <div class="mb-3">
+                                    <BreezeLabel for="visible" value="Видимость" />
+                                    <Toggle v-model="form.visible" />
+                                </div>
+
                                 <div class="mb-3">
                                     <BreezeLabel for="name" value="Заголовок"/>
                                     <BreezeInput id="name" type="text" class="mt-1 block w-full"
@@ -64,14 +70,7 @@
                                         id="manufacturer"
                                         v-model="form.manufacturer"
                                         placeholder="Выберите производителя"
-                                        :filterResults="false"
-                                        :minChars="0"
-                                        :resolveOnLoad="false"
-                                        :delay="0"
-                                        :searchable="true"
-                                        :options="async function(query) {
-                                            return await fetchManufacturers(query)
-                                        }"
+                                        :options="manufacturers"
                                     />
                                 </div>
                                 <div class="mb-3">
@@ -80,14 +79,7 @@
                                         id="category"
                                         v-model="form.category"
                                         placeholder="Выберите категорию"
-                                        :filterResults="false"
-                                        :minChars="0"
-                                        :resolveOnLoad="false"
-                                        :delay="0"
-                                        :searchable="true"
-                                        :options="async function(query) {
-                                            return await fetchCategories(query)
-                                        }"
+                                        :options="categories"
                                     />
                                 </div>
                                 <div class="mb-3">
@@ -121,14 +113,7 @@
                                                 v-if="form.specifications[index]"
                                                 v-model="form.specifications[index].name"
                                                 placeholder="Выберите характеристику"
-                                                :filterResults="false"
-                                                :minChars="0"
-                                                :resolveOnLoad="false"
-                                                :delay="0"
-                                                :searchable="true"
-                                                :options="async function(query) {
-                                                            return await fetchSpecifications(query)
-                                                        }"
+                                                :options="specifications"
                                             />
                                         </div>
                                         <div class="col-6 d-flex">
@@ -199,6 +184,7 @@ import BreezeValidationErrors from "@/Components/ValidationErrors";
 import Multiselect from '@vueform/multiselect'
 import ImageUploader from '@/Components/Admin/ImagesUploader'
 import {BIconChevronLeft, BIconXLg} from 'bootstrap-icons-vue';
+import Toggle from '@vueform/toggle';
 
 export default {
     components: {
@@ -212,7 +198,8 @@ export default {
         Head, Link,
         ImageUploader,
         Multiselect,
-        BIconChevronLeft, BIconXLg
+        BIconChevronLeft, BIconXLg,
+        Toggle,
     },
     props: ['data'],
     data() {

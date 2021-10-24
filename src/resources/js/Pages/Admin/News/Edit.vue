@@ -1,6 +1,4 @@
 <template>
-    <Head title="Dashboard" />
-
     <BreezeAuthenticatedLayout>
         <template #header>
             <div class="d-flex align-items-center">
@@ -21,6 +19,11 @@
                 <BreezeValidationErrors class="mb-4" />
 
                 <form @submit.prevent="submit" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <BreezeLabel for="visible" value="Видимость" />
+                        <Toggle v-model="form.visible" />
+                    </div>
+
                     <div class="mb-3">
                         <BreezeLabel for="title" value="Заголовок" />
                         <BreezeInput id="title" type="text" class="mt-1 block w-full" v-model="form.title" autofocus />
@@ -81,6 +84,7 @@ import BreezeLabel from "@/Components/Label";
 import BreezeValidationErrors from "@/Components/ValidationErrors";
 import { BIconChevronLeft } from 'bootstrap-icons-vue';
 import ImageUploader from '@/Components/Admin/ImagesUploader';
+import Toggle from '@vueform/toggle';
 
 export default {
     components: {
@@ -94,6 +98,7 @@ export default {
         Link,
         BIconChevronLeft,
         ImageUploader,
+        Toggle,
     },
     props: ['data'],
     data() {

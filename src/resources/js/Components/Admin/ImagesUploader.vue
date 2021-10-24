@@ -49,16 +49,6 @@
             v-else
             class="w-full max-h-full image-container">
 
-            <label
-                v-if="multiple"
-                :for="`assetsField-${refName}`"
-                class="relative flex items-center justify-center bg-white border border-dashed overflow-hidden w-[200px] h-[200px] rounded-lg cursor-pointer"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none" viewBox="0 0 60 60">
-                    <circle cx="30" cy="30" r="28.5" fill="#fff" stroke="#2775F9" stroke-width="3" />
-                    <path fill="#2775F8" d="M20.184 32.285V29.16h8.125v-8.223h3.066v8.223H39.5v3.125h-8.125v8.3h-3.066v-8.3h-8.125z" />
-                </svg>
-            </label>
             <div
                 v-for="(file, idx) in imagesList"
                 :key="idx"
@@ -78,6 +68,17 @@
                         <path fill="#fff" fill-rule="evenodd" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v10zM18 4h-2.5l-.71-.71c-.18-.18-.44-.29-.7-.29H9.91c-.26 0-.52.11-.7.29L8.5 4H6c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1z" clip-rule="evenodd"/>                    </svg>
                 </button>
             </div>
+
+            <label
+                v-if="multiple"
+                :for="`assetsField-${refName}`"
+                class="relative flex items-center justify-center bg-white border border-dashed overflow-hidden w-[200px] h-[200px] rounded-lg cursor-pointer"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none" viewBox="0 0 60 60">
+                    <circle cx="30" cy="30" r="28.5" fill="#fff" stroke="#2775F9" stroke-width="3" />
+                    <path fill="#2775F8" d="M20.184 32.285V29.16h8.125v-8.223h3.066v8.223H39.5v3.125h-8.125v8.3h-3.066v-8.3h-8.125z" />
+                </svg>
+            </label>
         </div>
     </div>
 </template>

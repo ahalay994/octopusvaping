@@ -19,10 +19,6 @@ function uploadImage(Request $request, String $pathDir)
             return true;
         }
 
-        /*$request->validate([
-            'file' => 'mimes:pdf,xlx,csv|max:2048',
-        ]);*/
-
         foreach ($request->file() as $fieldName => $file) {
             $fileName = $file->getClientOriginalName();
             $fullPath = public_path() . DIRECTORY_SEPARATOR .$pathDir;
@@ -55,7 +51,7 @@ function uploadImages(Request $request, String $pathDir)
             foreach ($files as $file) {
                 $fileName = $file->getClientOriginalName();
                 $fullPath = public_path() . DIRECTORY_SEPARATOR . $pathDir;
-                $file->move($fullPath, Str::random(40));
+                $file->move($fullPath, $fileName);
                 ImageOptimizer::optimize($fullPath . $fileName);
 
                 $images[$fieldName][] = $fileName;
@@ -98,14 +94,3 @@ function uploadImageTable(Request $request, String $pathDir, String $filename)
 
     return $images;
 }
-
-//function upload(UploadedFile $picture)
-//{
-//    $original = pathinfo($picture->getClientOriginalName(), PATHINFO_FILENAME);
-//    $sanitize = preg_replace('/[^a-zA-Z0-9]+/', '-', $original);
-//    $fileName = $sanitize . '.' . $picture->getClientOriginalExtension();
-//    $destination = public_path() . DIRECTORY_SEPARATOR . 'uploads/courses';
-//    $uploaded = $picture->move($destination, $fileName);
-//    Image::make($uploaded)->fit(300, 300)->save($destination . '/300x300-' . $fileName);
-//    return $fileName;
-//}

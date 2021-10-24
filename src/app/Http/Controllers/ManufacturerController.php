@@ -86,18 +86,21 @@ class ManufacturerController extends Controller
             if ($manufacturer['state'] === 'view') continue;
 
             if ($manufacturer['id'] === null) {
-                Manufacturer::insert(['name' => $manufacturer['name'], 'image' => $images['_' . ($id)]]);
+                Manufacturer::insert([
+                    'name' => $manufacturer['name'],
+                    'image' => $images['_' . ($id)],
+                    'created_at' => date('Y-m-d H:i:s', time()),
+                ]);
             } else {
                 Manufacturer::where(['id' => $manufacturer['id']])
                     ->update([
                         'name' => $manufacturer['name'],
                         'image' => (gettype($images) !== 'boolean' && count($images) > 0 && $images[$manufacturer['id']])
                             ? $images[$manufacturer['id']]
-                            : $manufacturer['image']
+                            : $manufacturer['image'],
+                        'updated_at' => date('Y-m-d H:i:s', time()),
                     ]);
-
             }
-
         }
 
         return redirect()->route('admin.manufacturer.view');

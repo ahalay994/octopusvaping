@@ -6,10 +6,11 @@ use \App\Http\Controllers\CategoryController;
 use \App\Http\Controllers\SpecificationController;
 use \App\Http\Controllers\CatalogController;
 use \App\Http\Controllers\ManufacturerController;
+use \App\Http\Controllers\SliderController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::middleware(['auth', 'verified', 'role:manager', 'role:developer'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', function () {
         return Inertia::render('Admin/Dashboard');
@@ -24,7 +25,7 @@ Route::middleware(['auth', 'verified', 'role:manager', 'role:developer'])->prefi
         Route::delete('/delete/{id}', [NewsController::class, 'delete'])->name('.delete');
     });
 
-    Route::middleware(['auth', 'verified', 'role:admin'])->name('user')->prefix('/user')->group(function () {
+    Route::middleware(['role:admin'])->name('user')->prefix('/user')->group(function () {
         Route::get('/', [UserController::class, 'store'])->name('.view');
         Route::get('/add', [UserController::class, 'addUserView'])->name('.add.view');
         Route::post('/add', [UserController::class, 'addUser'])->name('.add');
@@ -35,7 +36,7 @@ Route::middleware(['auth', 'verified', 'role:manager', 'role:developer'])->prefi
         Route::post('/role/{id}', [UserController::class, 'editRole'])->name('.role.edit');
     });
 
-    Route::middleware(['auth', 'verified'])->name('category')->prefix('/category')->group(function () {
+    Route::name('category')->prefix('/category')->group(function () {
         Route::get('/', [CategoryController::class, 'store'])->name('.view');
         Route::get('/add', [CategoryController::class, 'addView'])->name('.add.view');
         Route::post('/add', [CategoryController::class, 'add'])->name('.add');
@@ -44,24 +45,30 @@ Route::middleware(['auth', 'verified', 'role:manager', 'role:developer'])->prefi
         Route::delete('/delete{id}', [CategoryController::class, 'delete'])->name('.delete');
     });
 
-    Route::middleware(['auth', 'verified'])->name('specification')->prefix('/specification')->group(function () {
+    Route::name('specification')->prefix('/specification')->group(function () {
         Route::get('/', [SpecificationController::class, 'store'])->name('.view');
         Route::post('/save', [SpecificationController::class, 'save'])->name('.save');
         Route::delete('/delete', [SpecificationController::class, 'delete'])->name('.delete');
     });
 
-    Route::middleware(['auth', 'verified'])->name('catalog.')->prefix('/catalog')->group(function () {
-        Route::get('/', [CatalogController::class, 'store'])->name('view');
-        Route::get('/add', [CatalogController::class, 'addView'])->name('add.view');
-        Route::post('/add', [CatalogController::class, 'add'])->name('add');
-        Route::get('/edit/{id}', [CatalogController::class, 'editView'])->name('edit.view');
-        Route::post('/edit/{id}', [CatalogController::class, 'edit'])->name('edit');
-        Route::delete('/delete/{id}', [CatalogController::class, 'delete'])->name('delete');
+    Route::name('catalog')->prefix('/catalog')->group(function () {
+        Route::get('/', [CatalogController::class, 'store'])->name('.view');
+        Route::get('/add', [CatalogController::class, 'addView'])->name('.add.view');
+        Route::post('/add', [CatalogController::class, 'add'])->name('.add');
+        Route::get('/edit/{id}', [CatalogController::class, 'editView'])->name('.edit.view');
+        Route::post('/edit/{id}', [CatalogController::class, 'edit'])->name('.edit');
+        Route::delete('/delete/{id}', [CatalogController::class, 'delete'])->name('.delete');
     });
 
     Route::name('manufacturer')->prefix('/manufacturer')->group(function () {
         Route::get('/', [ManufacturerController::class, 'store'])->name('.view');
         Route::post('/save', [ManufacturerController::class, 'save'])->name('.save');
         Route::delete('/delete/{id}', [ManufacturerController::class, 'delete'])->name('.delete');
+    });
+
+    Route::name('slider')->prefix('/slider')->group(function () {
+        Route::get('/', [SliderController::class, 'store'])->name('.view');
+        Route::post('/save', [SliderController::class, 'save'])->name('.save');
+        Route::delete('/delete', [SliderController::class, 'delete'])->name('.delete');
     });
 });

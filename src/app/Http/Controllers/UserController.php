@@ -84,6 +84,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'created_at' => date('Y-m-d H:i:s', time())
         ]);
         $user->roles()->attach($userRole);
 
@@ -104,6 +105,7 @@ class UserController extends Controller
         $user = User::where(['id' => $request->id])->first();
         $user->name = $request->name;
         $user->password = $request->password ? Hash::make($request->password) : $user->password;
+        $user->updated = date('Y-m-d H:i:s', time());
         $user->update();
 
         return redirect()->route('admin.user.view')->with('status', 'Пользователь изменён');

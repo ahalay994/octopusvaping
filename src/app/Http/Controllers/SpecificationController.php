@@ -56,7 +56,7 @@ class SpecificationController extends Controller
      */
     public function getNames()
     {
-        $specifications = Specification::all();
+        $specifications = Specification::orderBy('name', 'ASC')->get();
         $data = [];
         foreach ($specifications as $specification) {
             array_push($data, [
@@ -75,10 +75,16 @@ class SpecificationController extends Controller
             }
 
             if ($specification['id'] === null) {
-                Specification::insert(['name' => $specification['name']]);
+                Specification::insert([
+                    'name' => $specification['name'],
+                    'created_at' => date('Y-m-d H:i:s', time())
+                ]);
             } else {
                 if ($specification['state'] === 'edit') {
-                    Specification::where(['id' => $specification['id']])->update(['name' => $specification['name']]);
+                    Specification::where(['id' => $specification['id']])->update([
+                        'name' => $specification['name'],
+                        'updated_at' => date('Y-m-d H:i:s', time())
+                    ]);
                 }
             }
         }

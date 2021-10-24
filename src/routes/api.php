@@ -7,6 +7,7 @@ use \App\Http\Controllers\CatalogController;
 use \App\Http\Controllers\UserController;
 use \App\Http\Controllers\CategoryController;
 use \App\Http\Controllers\ManufacturerController;
+use \App\Http\Controllers\SliderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +49,11 @@ Route::prefix('/manufacturer')->name('api.manufacturer.')->group(function () {
     Route::get('/get', [ManufacturerController::class, 'getNames'])->name('get.names');
 });
 
-Route::middleware(['auth', 'role:admin'])->name('api.user')->prefix('/user')->group(function () {
-    Route::get('/', [UserController::class, 'store'])->name('.get');
+Route::middleware(['auth', 'role:admin'])->name('api.user.')->prefix('/user')->group(function () {
+    Route::get('/', [UserController::class, 'store'])->name('get');
+});
+
+Route::prefix('/slider')->name('api.slider.')->group(function () {
+    Route::get('/', [SliderController::class, 'get'])->name('get');
+    Route::get('/get', [SliderController::class, 'getNames'])->name('get.names');
 });

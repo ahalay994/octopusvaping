@@ -23,7 +23,8 @@ class News extends Model
         'short_description',
         'description',
         'image',
-        'image_preview'
+        'image_preview',
+        'visible',
     ];
 
     /**

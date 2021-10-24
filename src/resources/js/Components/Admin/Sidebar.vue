@@ -83,6 +83,11 @@ export default {
                 ]
             },
             {
+                title: 'Слайдер',
+                link: 'admin.slider.view',
+                icon: ''
+            },
+            {
                 title: 'Новости',
                 link: 'admin.news.view',
                 icon: ''

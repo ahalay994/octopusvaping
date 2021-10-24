@@ -31,6 +31,7 @@ class CategoryController extends Controller
                 'slug' => $category->slug,
                 'deep' => $category->deep,
                 'parent_id' => $parentCategory ? $parentCategory->name : null,
+                'created_at' => date('Y-m-d H:i:s', time()),
             ]);
         }
 
@@ -56,7 +57,7 @@ class CategoryController extends Controller
      */
     public function getNames()
     {
-        $categoriesDB = Category::all();
+        $categoriesDB = Category::orderBy('name', 'ASC')->get();
         $categories = [];
         foreach ($categoriesDB as $item) {
             array_push($categories, [
@@ -99,7 +100,8 @@ class CategoryController extends Controller
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'parent_id' => $request->parent_id ?: null,
-            'deep' => $request->deep ?: 0
+            'deep' => $request->deep ?: 0,
+            'created_at' => date('Y-m-d H:i:s', time()),
         ]);
 
         return redirect()->route('admin.category.view')->with('status', 'Категория добавлена');
@@ -116,7 +118,8 @@ class CategoryController extends Controller
                 'name' => $request->name,
                 'slug' => Str::slug($request->name),
                 'parent_id' => $request->parent_id ?: null,
-                'deep' => $request->deep ?: 0
+                'deep' => $request->deep ?: 0,
+                'updated_at' => date('Y-m-d H:i:s', time()),
         ]);
 
         return redirect()->route('admin.category.view')->with('status', 'Категория обновлена');

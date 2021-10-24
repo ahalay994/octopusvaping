@@ -28,23 +28,28 @@ class CatalogController extends Controller
             $category = array_filter($categories, function ($elem) use ($categoryId) {
                 return array_key_exists('value', $elem) and $elem['value'] === $categoryId;
             });
+            $categoryLabel = '';
+            foreach ($category as $i) $categoryLabel = $i['label'];
             $manufacturerId = $item->manufacturer_id;
             $manufacturer = array_filter($manufacturers, function ($elem) use ($manufacturerId) {
                 return array_key_exists('value', $elem) and $elem['value'] === $manufacturerId;
             });
+            $manufacturerLabel = '';
+            foreach ($manufacturer as $i) $manufacturerLabel = $i['label'];
 
             array_push($data, [
                 'id' => $item->id,
                 'name' => $item->name,
                 'slug' => $item->slug,
-                'category_id' => $category[0]['label'],
+                'category_id' => $categoryLabel,
                 'description' => $item->description,
                 'short_description' => $item->short_description,
                 'images' => Image::where(['model_type' => self::TYPE_MODEL, 'model_id' => $item->id])->get(),
                 'image_preview' => $item->image_preview,
-                'manufacturer_id' => $manufacturer ? $manufacturer[0]['label'] : '',
+                'manufacturer_id' => $manufacturer ? $manufacturerLabel : '',
                 'price' => $item->price,
                 'price_old' => $item->price_old,
+                'visible' => $item->visible,
             ]);
         }
 
@@ -97,6 +102,7 @@ class CatalogController extends Controller
                 'manufacturer' => $catalog->manufacturer_id,
                 'specifications' => $specifications,
                 'dir_image' => self::FILE_PATH,
+                'visible' => $catalog->visible,
             ]
         ]);
     }
@@ -136,6 +142,7 @@ class CatalogController extends Controller
             'manufacturer_id' => $request['manufacturer'],
             'price' => $request['price'],
             'price_old' => $request['price_old'],
+            'visible' => $request['visible'] === true || intval($request['visible']) === 1 ? 1 : 0,
             'created_at' => date('Y-m-d H:i:s', time()),
         ]);
 
@@ -145,7 +152,8 @@ class CatalogController extends Controller
                 CatalogSpecificationRelation::create([
                     'catalog_id' => $catalog->id,
                     'specification_id' => intval($specification['name']),
-                    'value' => $specification['value']
+                    'value' => $specification['value'],
+                    'created_at' => date('Y-m-d H:i:s', time()),
                 ]);
             }
         }
@@ -156,7 +164,8 @@ class CatalogController extends Controller
                 Image::create([
                     'model_type' => self::TYPE_MODEL,
                     'model_id' => $catalog['id'],
-                    'name' => $image
+                    'name' => $image,
+                    'created_at' => date('Y-m-d H:i:s', time()),
                 ]);
             }
         }
@@ -167,7 +176,8 @@ class CatalogController extends Controller
             'model_id' => $catalog->id,
             'title' => $request->meta_title ?: $catalog->name,
             'description' => $request->meta_description ?: $catalog->description,
-            'image' => $images['meta_image'] ? $images['meta_image'][0] : ($images['image_preview'] ? $images['image_preview'][0] : ($images['images'] ? $images['images'][0] : null))
+            'image' => $images['meta_image'] ? $images['meta_image'][0] : ($images['image_preview'] ? $images['image_preview'][0] : ($images['images'] ? $images['images'][0] : null)),
+            'created_at' => date('Y-m-d H:i:s', time()),
         ]);
 
         return redirect()->route('admin.catalog.view')->with('status', 'Запись добавлена');
@@ -189,17 +199,18 @@ class CatalogController extends Controller
         // Сам товар
         $catalog = Catalog::where(['id' => $request['id']])->first();
         $catalog->update([
-                'name' => $request['name'],
-                'slug' => Str::slug($request['name']),
-                'category_id' => $request['category'],
-                'short_description' => $request['short_description'],
-                'description' => $request['description'],
-                'image_preview' => gettype($images) === 'boolean' || !isset($images['image_preview']) ? $catalog['image_preview'] : (!!$images['image_preview'] ? $images['image_preview'][0] : $catalog['image_preview']),
-                'manufacturer_id' => $request['manufacturer'],
-                'price' => $request['price'],
-                'price_old' => $request['price_old'],
-                'created_at' => date('Y-m-d H:i:s', time()),
-            ]);
+            'name' => $request['name'],
+            'slug' => Str::slug($request['name']),
+            'category_id' => $request['category'],
+            'short_description' => $request['short_description'],
+            'description' => $request['description'],
+            'image_preview' => gettype($images) === 'boolean' || !isset($images['image_preview']) ? $catalog['image_preview'] : (!!$images['image_preview'] ? $images['image_preview'][0] : $catalog['image_preview']),
+            'manufacturer_id' => $request['manufacturer'],
+            'price' => $request['price'],
+            'price_old' => $request['price_old'],
+            'visible' => $request['visible'] === true || intval($request['visible']) === 1 ? 1 : 0,
+            'updated_at' => date('Y-m-d H:i:s', time()),
+        ]);
 
         // Характеристики
         $catalogSpecificationRelation = CatalogSpecificationRelation::where(['catalog_id' => $catalog->id])->pluck('id', 'specification_id');
@@ -212,7 +223,8 @@ class CatalogController extends Controller
                 CatalogSpecificationRelation::create([
                     'catalog_id' => $catalog->id,
                     'specification_id' => intval($specification['name']),
-                    'value' => $specification['value']
+                    'value' => $specification['value'],
+                    'created_at' => date('Y-m-d H:i:s', time()),
                 ]);
             }
         }
@@ -232,12 +244,14 @@ class CatalogController extends Controller
         foreach ($imagesDB as $name => $id) {
             Image::where(['id' => $id])->delete();
         }
+
         if (gettype($images) !== 'boolean' && isset($images['images'])) {
             foreach ($images['images'] as $image) {
                 Image::create([
                     'model_type' => self::TYPE_MODEL,
                     'model_id' => $catalog['id'],
-                    'name' => $image
+                    'name' => $image,
+                    'created_at' => date('Y-m-d H:i:s', time()),
                 ]);
             }
         }
@@ -248,6 +262,7 @@ class CatalogController extends Controller
             'title' => $request->meta_title ?: $catalog->name,
             'description' => $request->meta_description ?: $catalog->description,
             'image' => gettype($images) === 'boolean' || !isset($images['meta_image']) ? $meta->image : ($images['meta_image'] ? $images['meta_image'][0] : $meta->image),
+            'updated_at' => date('Y-m-d H:i:s', time()),
         ]);
 
         return redirect()->route('admin.catalog.view')->with('status', 'Запись обновлена');

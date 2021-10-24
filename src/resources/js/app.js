@@ -7,6 +7,7 @@ import { InertiaProgress } from '@inertiajs/progress';
 import 'vue-search-select/dist/VueSearchSelect.css'
 import '@vueform/multiselect/themes/default.css'
 import 'dropzone-vue/dist/dropzone-vue.common.css';
+import '@vueform/toggle/themes/default.css';
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 

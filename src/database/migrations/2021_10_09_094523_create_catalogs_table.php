@@ -24,6 +24,7 @@ class CreateCatalogsTable extends Migration
             $table->integer('manufacturer_id');
             $table->double('price');
             $table->double('price_old')->nullable();
+            $table->boolean('visible')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

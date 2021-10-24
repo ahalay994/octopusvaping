@@ -27,6 +27,7 @@
                             <th scope="col">Заголовок</th>
                             <th scope="col">Краткое описание</th>
                             <th scope="col">Описание</th>
+                            <th scope="col">Видимость</th>
                             <th scope="col"></th>
                         </tr>
                         </thead>
@@ -37,6 +38,7 @@
                                 <td>{{ item.title }}</td>
                                 <td>{{ item.short_description }}</td>
                                 <td>{{ item.description }}</td>
+                                <td>{{ item.visible === 1 ? 'Да' : 'Нет' }}</td>
                                 <td>
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"

@@ -39,6 +39,12 @@
                                 <div class="tab-content py-4" id="nav-tabContent">
                                     <div class="tab-pane fade show active" id="nav-main" role="tabpanel"
                                          aria-labelledby="nav-main-tab">
+
+                                        <div class="mb-3">
+                                            <BreezeLabel for="visible" value="Видимость" />
+                                            <Toggle v-model="form.visible" />
+                                        </div>
+
                                         <div class="mb-3">
                                             <BreezeLabel for="name" value="Заголовок"/>
                                             <BreezeInput id="name" type="text" class="mt-1 block w-full"
@@ -205,6 +211,7 @@ import BreezeValidationErrors from "@/Components/ValidationErrors";
 import Multiselect from '@vueform/multiselect'
 import {BIconChevronLeft, BIconXLg} from 'bootstrap-icons-vue';
 import ImageUploader from '@/Components/Admin/ImagesUploader'
+import Toggle from '@vueform/toggle';
 
 export default {
     components: {
@@ -219,6 +226,7 @@ export default {
         Multiselect,
         BIconChevronLeft, BIconXLg,
         ImageUploader,
+        Toggle,
     },
 
     props: {
@@ -247,7 +255,8 @@ export default {
                 meta_image: [],
                 category: '',
                 manufacturer: '',
-                specifications: []
+                specifications: [],
+                visible: 1
             }, {
                 resetOnSuccess: true,
                 forceFormData: true
