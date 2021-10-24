@@ -37,15 +37,25 @@
                     </div>
 
                     <div class="mb-3">
-                        <BreezeLabel value="Изображение" />
-                        <label :class="['upload-image', form.image === null ? 'no-image' : '']" for="image" :style="`background-image: url('${image}')`" />
-                        <input id="image" type="file" @input="uploadImage($event, 'image')" name="image" ref="image" hidden accept=".webp,.png,.jpg" />
+                        <BreezeLabel for="image" value="Изображение" />
+                        <ImageUploader
+                            id="image"
+                            :images="form.image_url"
+                            :files="form.image"
+                            name="image"
+                            refName="image"
+                        />
                     </div>
 
                     <div class="mb-3">
-                        <BreezeLabel value="Превью-изображение" />
-                        <label :class="['upload-image', form.image_preview === null ? 'no-image' : '']" for="image-preview" :style="`background-image: url('${image_preview}')`" />
-                        <input id="image-preview" type="file" @input="uploadImage($event, 'image_preview')" name="image_preview" ref="image_preview" hidden accept=".webp,.png,.jpg" />
+                        <BreezeLabel for="image_preview" value="Превью-изображение" />
+                        <ImageUploader
+                            id="image_preview"
+                            :images="form.image_preview_url"
+                            :files="form.image_preview"
+                            name="image_preview"
+                            refName="image_preview"
+                        />
                     </div>
 
                     <div class="flex items-center justify-end mt-4">
@@ -68,6 +78,7 @@ import BreezeTextarea from "@/Components/Textarea";
 import BreezeLabel from "@/Components/Label";
 import BreezeValidationErrors from "@/Components/ValidationErrors";
 import { BIconChevronLeft } from 'bootstrap-icons-vue';
+import ImageUploader from '@/Components/Admin/ImagesUploader';
 
 export default {
     components: {
@@ -80,6 +91,7 @@ export default {
         Head,
         Link,
         BIconChevronLeft,
+        ImageUploader,
     },
 
     props: ['errors'],
@@ -90,15 +102,14 @@ export default {
                 title: '',
                 short_description: '',
                 description: '',
-                image: null,
-                image_preview: null
+                image: [],
+                image_url: [],
+                image_preview: [],
+                image_preview_url: [],
             }, {
                 resetOnSuccess: true,
                 forceFormData: true
             }),
-            image: null,
-            image_preview: null,
-
         }
     },
     mounted() {
@@ -110,16 +121,6 @@ export default {
                 onSuccess: (response) => {}
             })
         },
-        uploadImage(e, fieldName) {
-            const file = e.target.files[0];
-            this.form[fieldName] = file;
-
-            let reader = new FileReader
-            reader.onload = e => {
-                this[fieldName] = e.target.result
-            }
-            reader.readAsDataURL(file)
-        }
     }
 }
 </script>

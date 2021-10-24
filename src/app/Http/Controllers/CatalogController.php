@@ -6,6 +6,7 @@ use App\Models\Catalog;
 use App\Models\CatalogSpecificationRelation;
 use App\Models\Category;
 use App\Models\Image;
+use App\Models\Manufacturer;
 use App\Models\Meta;
 use App\Models\News;
 use App\Models\Specification;
@@ -17,15 +18,10 @@ class CatalogController extends Controller
     const FILE_PATH = 'images/catalog/';
     const TYPE_MODEL = 'catalog';
 
-    /**
-     * All.
-     *
-     * @return mixed
-     */
-    public function store()
-    {
+    public function get() {
         $catalog = Catalog::all();
-        $categories = (new CategoryController)->getAll();
+        $categories = (new CategoryController)->getNames();
+        $manufacturer = (new ManufacturerController())->getNames();
         $data = [];
         foreach ($catalog as $item) {
             array_push($data, [
@@ -36,14 +32,25 @@ class CatalogController extends Controller
                 'description' => $item->description,
                 'short_description' => $item->short_description,
                 'images' => Image::where(['model_type' => self::TYPE_MODEL, 'model_id' => $item->id])->get(),
-                'preview_image' => $item->preview_image,
-                'manufacturer_id' => $item->manufacturer_id,
+                'image_preview' => $item->image_preview,
+                'manufacturer_id' => $manufacturer[$item->manufacturer_id]['label'] ?? '',
                 'price' => $item->price,
                 'price_old' => $item->price_old,
             ]);
         }
+
+        return $data;
+    }
+
+    /**
+     * All.
+     *
+     * @return mixed
+     */
+    public function store()
+    {
         return Inertia::render('Admin/Catalog/View', [
-            'data' => $data
+            'data' => self::get()
         ]);
     }
 
@@ -54,7 +61,8 @@ class CatalogController extends Controller
     public function editView($id) {
         $catalog = Catalog::where(['id' => $id])->first();
         $images = Image::select(['name'])->where(['model_id' => $id, 'model_type' => self::TYPE_MODEL])->get();
-        $meta = Meta::select(['title', 'description', 'image'])->where(['model_type' => self::TYPE_MODEL, 'model_id' => $id])->first();
+        $meta = Meta::where(['model_type' => self::TYPE_MODEL, 'model_id' => $id])->first();
+
         $specifications = Specification::select(['specifications.id as name', 'catalog_specification_relations.value as value'])
             ->where(['catalog_specification_relations.catalog_id' => $id])
             ->leftJoin('catalog_specification_relations', 'catalog_specification_relations.specification_id', '=', 'specifications.id')
@@ -62,20 +70,34 @@ class CatalogController extends Controller
 
         return Inertia::render('Admin/Catalog/Edit', [
             'data' => [
-                'catalog' => $catalog,
-                'meta' => $meta,
+                'id' => $catalog->id,
+                'name' => $catalog->name,
+                'short_description' => $catalog->short_description,
+                'description' => $catalog->description,
+                'images' => [],
+                'images_url' => $images,
+                'image_preview' => [],
+                'image_preview_url' => [$catalog->image_preview],
+                'price' => $catalog->price,
+                'price_old' => $catalog->price_old,
+                'meta_title' => $meta->title,
+                'meta_description' => $meta->description,
+                'meta_image' => [],
+                'meta_image_url' => [$meta->image],
+                'category' => $catalog->category_id,
+                'manufacturer' => $catalog->manufacturer_id,
                 'specifications' => $specifications,
-                'images' => $images
+                'dir_image' => self::FILE_PATH,
             ]
         ]);
     }
 
     /**
-     * Get all news.
+     * Get all.
      *
      * @return mixed
      */
-    public function getAll()
+    public function getNames()
     {
         return Category::pluck('name', 'id');
     }
@@ -88,6 +110,7 @@ class CatalogController extends Controller
      */
     public function add(\Illuminate\Http\Request $request) {
         $images = uploadImages($request, self::FILE_PATH);
+
         if (!$images) {
             return [
                 'error' => 'Ошибка с загрузкой изображения'
@@ -100,9 +123,8 @@ class CatalogController extends Controller
             'category_id' => $request['category'],
             'short_description' => $request['short_description'],
             'description' => $request['description'],
-            'image' => null,
-            'preview_image' => !!$images['preview_image'] ? $images['preview_image'][0] : $images['images'][0],
-            'manufacturer_id' => $request['manufacturer_id'],
+            'image_preview' => !!$images['image_preview'] ? $images['image_preview'][0] : $images['images'][0],
+            'manufacturer_id' => $request['manufacturer'],
             'price' => $request['price'],
             'price_old' => $request['price_old'],
             'created_at' => date('Y-m-d H:i:s', time()),
@@ -136,7 +158,7 @@ class CatalogController extends Controller
             'model_id' => $catalog->id,
             'title' => $request->meta_title ?: $catalog->name,
             'description' => $request->meta_description ?: $catalog->description,
-            'image' => $images['meta_image'] ? $images['meta_image'][0] : ($images['preview_image'] ? $images['preview_image'][0] : ($images['images'] ? $images['images'][0] : null))
+            'image' => $images['meta_image'] ? $images['meta_image'][0] : ($images['image_preview'] ? $images['image_preview'][0] : ($images['images'] ? $images['images'][0] : null))
         ]);
 
         return redirect()->route('admin.catalog.view')->with('status', 'Запись добавлена');
@@ -148,27 +170,78 @@ class CatalogController extends Controller
      * @return
      */
     public function edit(\Illuminate\Http\Request $request) {
-        $images = uploadImage($request, self::FILE_PATH);
+        $images = uploadImages($request, self::FILE_PATH);
 
         if (!$images) {
             return [
                 'error' => 'Ошибка с загрузкой изображения'
             ];
         }
-        News::where('id', $request->id)
-            ->update([
-                'title' => $request->title,
-                'short_description' => $request->short_description,
-                'description' => $request->description,
-                'image' => $images === true ? $request->image : $images['image'],
-                'preview_image' => $images === true ? $request->preview_image : $images['preview_image'],
-                'manufacturer_id' => $request['manufacturer_id'],
+        // Сам товар
+        $catalog = Catalog::where(['id' => $request['id']])->first();
+        $catalog->update([
+                'name' => $request['name'],
+                'slug' => Str::slug($request['name']),
+                'category_id' => $request['category'],
+                'short_description' => $request['short_description'],
+                'description' => $request['description'],
+                'image_preview' => gettype($images) === 'boolean' || !isset($images['image_preview']) ? $catalog['image_preview'] : (!!$images['image_preview'] ? $images['image_preview'][0] : $catalog['image_preview']),
+                'manufacturer_id' => $request['manufacturer'],
                 'price' => $request['price'],
                 'price_old' => $request['price_old'],
-                'updated_at' => date('Y-m-d H:i:s', time())
+                'created_at' => date('Y-m-d H:i:s', time()),
+            ]);
+
+        // Характеристики
+        $catalogSpecificationRelation = CatalogSpecificationRelation::where(['catalog_id' => $catalog->id])->pluck('id', 'specification_id');
+        if ($request->specifications && count($request->specifications) > 0) {
+            foreach ($request->specifications as $specification) {
+                if (isset($catalogSpecificationRelation[intval($specification['name'])])) {
+                    unset($catalogSpecificationRelation[intval($specification['name'])]);
+                    continue;
+                }
+                CatalogSpecificationRelation::create([
+                    'catalog_id' => $catalog->id,
+                    'specification_id' => intval($specification['name']),
+                    'value' => $specification['value']
+                ]);
+            }
+        }
+        if (count($catalogSpecificationRelation) > 0) {
+            foreach ($catalogSpecificationRelation as $id) {
+                CatalogSpecificationRelation::where(['id' => $id])->delete();
+            }
+        }
+
+        // Изображения
+        $imagesDB = Image::where(['model_type' => self::TYPE_MODEL, 'model_id' => $catalog['id']])->pluck('id', 'name');
+        foreach ($request->images_url as $item) {
+            if (gettype($item) === 'array' && isset($item['name'])) {
+                unset($imagesDB[$item['name']]);
+            }
+        }
+        foreach ($imagesDB as $name => $id) {
+            Image::where(['id' => $id])->delete();
+        }
+        if (gettype($images) !== 'boolean' && isset($images['images'])) {
+            foreach ($images['images'] as $image) {
+                Image::create([
+                    'model_type' => self::TYPE_MODEL,
+                    'model_id' => $catalog['id'],
+                    'name' => $image
+                ]);
+            }
+        }
+
+        // Мета теги
+        $meta = Meta::where(['model_id' => $catalog->id, 'model_type' => self::TYPE_MODEL])->first();
+        $meta->update([
+            'title' => $request->meta_title ?: $catalog->name,
+            'description' => $request->meta_description ?: $catalog->description,
+            'image' => gettype($images) === 'boolean' || !isset($images['meta_image']) ? $meta->image : ($images['meta_image'] ? $images['meta_image'][0] : $meta->image),
         ]);
 
-        return redirect()->route('admin.news.view')->with('status', 'Запись добавлена');
+        return redirect()->route('admin.catalog.view')->with('status', 'Запись обновлена');
     }
 
     /**
@@ -178,7 +251,16 @@ class CatalogController extends Controller
      */
     public function delete($id) {
         try {
-            return News::where(['id' => $id])->delete();
+            $catalogSpecificationRelation = CatalogSpecificationRelation::where(['catalog_id' => $id])->get();
+            foreach ($catalogSpecificationRelation as $item) {
+                $item->delete();
+            }
+            $images = Image::where(['model_id' => $id, 'model_type' => CatalogController::TYPE_MODEL])->get();
+            foreach ($images as $image) {
+                $image->delete();
+            }
+            Meta::where(['model_id' => $id, 'model_type' => CatalogController::TYPE_MODEL])->delete();
+            return Catalog::where(['id' => $id])->delete();
         } catch (\Illuminate\Database\QueryException $exception) {
             return $exception->errorInfo;
         }

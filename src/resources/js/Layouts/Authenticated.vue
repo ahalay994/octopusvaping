@@ -1,13 +1,16 @@
 <template>
     <div class="d-flex flex-row">
-        <AdminSidebar />
+        <AdminSidebar :state="stateLeftBar" />
 
-        <div class="min-h-screen bg-gray-100 w-100">
+        <div :class="['min-h-screen bg-gray-100 w-100', 'wrapper', stateLeftBar ? 'open' : '']">
             <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
-                        <div class="flex">
+                        <div class="flex align-items-center">
+                            <a href="javascript:void(0)" @click="toggleMenu">
+                                <BIconList  class="menu-toggle mr-4" />
+                            </a>
                             <!-- Logo -->
                             <div class="flex-shrink-0 flex items-center">
                                 <Link :href="route('admin.dashboard')">
@@ -100,6 +103,7 @@ import BreezeNavLink from '@/Components/NavLink.vue'
 import BreezeResponsiveNavLink from '@/Components/ResponsiveNavLink.vue'
 import AdminSidebar from '@/Components/Admin/Sidebar.vue'
 import { Link } from '@inertiajs/inertia-vue3';
+import { BIconList } from 'bootstrap-icons-vue'
 
 export default {
     components: {
@@ -110,16 +114,32 @@ export default {
         BreezeResponsiveNavLink,
         AdminSidebar,
         Link,
+        BIconList,
     },
 
     data() {
         return {
             showingNavigationDropdown: false,
+            stateLeftBar: true,
         }
     },
+    methods: {
+        toggleMenu() {
+            this.stateLeftBar = !this.stateLeftBar;
+        }
+    }
 }
 </script>
 
 <style lang="scss">
-
+.menu-toggle {
+    font-size: 32px;
+    color: #000;
+}
+.wrapper {
+    transition: margin .3s;
+    &.open {
+        margin-left: 300px;
+    }
+}
 </style>

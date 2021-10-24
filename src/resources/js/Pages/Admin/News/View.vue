@@ -27,8 +27,6 @@
                             <th scope="col">Заголовок</th>
                             <th scope="col">Краткое описание</th>
                             <th scope="col">Описание</th>
-                            <th scope="col">Изображение</th>
-                            <th scope="col">Превью-изображение</th>
                             <th scope="col"></th>
                         </tr>
                         </thead>
@@ -39,8 +37,6 @@
                                 <td>{{ item.title }}</td>
                                 <td>{{ item.short_description }}</td>
                                 <td>{{ item.description }}</td>
-                                <td><img v-if="item.image" :src="'/images/news/' + item.image" width="100"/></td>
-                                <td><img v-if="item.image_preview" :src="'/images/news/' + item.image_preview" width="100"/></td>
                                 <td>
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
@@ -106,7 +102,7 @@ export default {
     },
     methods: {
         getNews() {
-            axios.get(this.route('api.news.get.all'))
+            axios.get(this.route('api.news.get'))
             .then(response => {
                 this.news = response.data;
             });

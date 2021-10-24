@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use Nette\Utils\Image;
 use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
 
@@ -54,7 +55,7 @@ function uploadImages(Request $request, String $pathDir)
             foreach ($files as $file) {
                 $fileName = $file->getClientOriginalName();
                 $fullPath = public_path() . DIRECTORY_SEPARATOR . $pathDir;
-                $file->move($fullPath, $fileName);
+                $file->move($fullPath, Str::random(40));
                 ImageOptimizer::optimize($fullPath . $fileName);
 
                 $images[$fieldName][] = $fileName;

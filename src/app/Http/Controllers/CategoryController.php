@@ -54,7 +54,7 @@ class CategoryController extends Controller
      *
      * @return mixed
      */
-    public function getAll()
+    public function getNames()
     {
         return Category::pluck('name', 'id');
     }

@@ -8,6 +8,7 @@
         "php": "^7.3|^8.0",
         "alexeymezenin/laravel-russian-slugs": "^0.9.0",
         "cviebrock/eloquent-sluggable": "^8.0",
+        "enyo/dropzone": "^5.9",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "inertiajs/inertia-laravel": "^0.4.3",

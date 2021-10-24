@@ -34,10 +34,12 @@ class NewsController extends Controller
             'title' => $news['title'],
             'short_description' => $news['short_description'],
             'description' => $news['description'],
-            'image' => '/' . self::FILE_PATH . $news['image'],
-            'image_preview' => '/' . self::FILE_PATH . $news['image_preview'],
+            'image' => [],
+            'image_url' => $news['image'] ? [$news['image']] : [],
+            'image_preview' => [],
+            'image_preview_url' => $news['image_preview'] ? [$news['image_preview']] : [],
+            'dir_image' => self::FILE_PATH,
         ];
-
 
         return Inertia::render('Admin/News/Edit', [
             'data' => $data
@@ -49,7 +51,7 @@ class NewsController extends Controller
      *
      * @return mixed
      */
-    public function getAll()
+    public function get()
     {
         return News::all();
     }
@@ -61,7 +63,7 @@ class NewsController extends Controller
      * @return array[]|\Illuminate\Http\RedirectResponse|string[]
      */
     public function add(\Illuminate\Http\Request $request) {
-        $images = uploadImage($request, self::FILE_PATH);
+        $images = uploadImages($request, self::FILE_PATH);
 
         if (!$images) {
             return [
@@ -69,12 +71,12 @@ class NewsController extends Controller
             ];
         }
 
-        $news = News::create([
+        News::create([
             'title' => $request->title,
             'short_description' => $request->short_description,
             'description' => $request->description,
-            'image' => $images === true ? null : $images['image'],
-            'image_preview' => $images === true ? null : $images['image_preview'],
+            'image' => $images === true ? null : $images['image'][0],
+            'image_preview' => $images === true ? null : $images['image_preview'][0],
         ]);
 
         return redirect()->route('admin.news.view')->with('status', 'Запись добавлена');
@@ -86,26 +88,21 @@ class NewsController extends Controller
      * @return
      */
     public function edit(\Illuminate\Http\Request $request) {
-        $images = uploadImage($request, self::FILE_PATH);
+        $images = uploadImages($request, self::FILE_PATH);
 
-        $dataSave = [
+        if (!$images) {
+            return ['error' => 'Ошибка с загрузкой изображения'];
+        }
+
+        $news = News::where('id', $request->id)->first();
+        News::where('id', $request->id)->update([
             'title' => $request->title,
             'short_description' => $request->short_description,
             'description' => $request->description,
-            'updated_at' => date('Y-m-d H:i:s', time())
-        ];
-
-        if (gettype($images) !== 'boolean') {
-            if (isset($images['image'])) $dataSave['image'] = $images['image'];
-            if (isset($images['image_preview'])) $dataSave['image_preview'] = $images['image_preview'];
-        }
-
-        if (!$images) {
-            return [
-                'error' => 'Ошибка с загрузкой изображения'
-            ];
-        }
-        News::where('id', $request->id)->update($dataSave);
+            'image' => gettype($images) === 'boolean' || !isset($images['image']) ? $news['image'] : $images['image'][0],
+            'image_preview' => gettype($images) === 'boolean' || !isset($images['image_preview']) ? $news['image_preview'] : $images['image_preview'][0],
+            'updated_at' => date('Y-m-d H:i:s', time()),
+        ]);
 
         return redirect()->route('admin.news.view')->with('status', 'Запись добавлена');
     }
@@ -121,24 +118,5 @@ class NewsController extends Controller
         } catch (\Illuminate\Database\QueryException $exception) {
             return $exception->errorInfo;
         }
-    }
-
-    function validateFields($request) {
-        $errors = [];
-        $fields = [
-            'title' => 'Заголовок',
-            'short_description' => 'Краткое описание',
-            'description' => 'Описание',
-            'image' => 'Изображение',
-            'image_preview' => 'Превью-изображение',
-        ];
-
-        foreach ($fields as $field => $name) {
-            if ($request[$field] === null) {
-                $errors[$field] = `Поле "${name}" обязатель для заполнения`;
-            }
-        }
-
-        return $errors;
     }
 }

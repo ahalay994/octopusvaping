@@ -9,7 +9,7 @@ use \App\Http\Controllers\ManufacturerController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::middleware(['auth', 'verified', 'role:developer'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/', function () {
         return Inertia::render('Admin/Dashboard');
@@ -20,17 +20,17 @@ Route::middleware(['auth', 'verified', 'role:developer'])->prefix('admin')->name
         Route::get('/add', [NewsController::class, 'addView'])->middleware('auth')->name('.add.view');
         Route::post('/add', [NewsController::class, 'add'])->middleware('auth')->name('.add');
         Route::get('/edit/{id}', [NewsController::class, 'editView'])->middleware('auth')->name('.edit.view');
-        Route::post('/edit/{id}', [NewsController::class, 'get'])->middleware('auth')->name('.edit');
-        Route::post('/delete/{id}', [NewsController::class, 'delete'])->middleware('auth')->name('.delete');
+        Route::post('/edit/{id}', [NewsController::class, 'edit'])->middleware('auth')->name('.edit');
+        Route::delete('/delete/{id}', [NewsController::class, 'delete'])->middleware('auth')->name('.delete');
     });
 
-    Route::middleware(['auth', 'verified', 'role:developer'])->name('user')->prefix('/user')->group(function () {
+    Route::middleware(['auth', 'verified', 'role:admin'])->name('user')->prefix('/user')->group(function () {
         Route::get('/', [UserController::class, 'store'])->name('.view');
         Route::get('/add', [UserController::class, 'addUserView'])->name('.add.view');
         Route::post('/add', [UserController::class, 'addUser'])->name('.add');
         Route::get('/edit/{id}', [UserController::class, 'editUserView'])->name('.edit.view');
         Route::post('/edit/{id}', [UserController::class, 'editUser'])->name('.edit');
-        Route::post('/delete/{id}', [UserController::class, 'deleteUser'])->name('.delete');
+        Route::delete('/delete/{id}', [UserController::class, 'deleteUser'])->name('.delete');
         Route::get('/role/{id}', [UserController::class, 'editRoleView'])->name('.role.view');
         Route::post('/role/{id}', [UserController::class, 'editRole'])->name('.role.edit');
     });
@@ -47,7 +47,7 @@ Route::middleware(['auth', 'verified', 'role:developer'])->prefix('admin')->name
     Route::middleware(['auth', 'verified'])->name('specification')->prefix('/specification')->group(function () {
         Route::get('/', [SpecificationController::class, 'store'])->name('.view');
         Route::post('/save', [SpecificationController::class, 'save'])->name('.save');
-        Route::post('/delete', [SpecificationController::class, 'delete'])->name('.delete');
+        Route::delete('/delete', [SpecificationController::class, 'delete'])->name('.delete');
     });
 
     Route::middleware(['auth', 'verified'])->name('catalog.')->prefix('/catalog')->group(function () {
@@ -56,7 +56,7 @@ Route::middleware(['auth', 'verified', 'role:developer'])->prefix('admin')->name
         Route::post('/add', [CatalogController::class, 'add'])->middleware('auth')->name('add');
         Route::get('/edit/{id}', [CatalogController::class, 'editView'])->middleware('auth')->name('edit.view');
         Route::post('/edit/{id}', [CatalogController::class, 'edit'])->middleware('auth')->name('edit');
-        Route::post('/delete/{id}', [CatalogController::class, 'delete'])->middleware('auth')->name('delete');
+        Route::delete('/delete/{id}', [CatalogController::class, 'delete'])->middleware('auth')->name('delete');
     });
 
     Route::name('manufacturer')->prefix('/manufacturer')->group(function () {

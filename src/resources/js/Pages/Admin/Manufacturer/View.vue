@@ -174,8 +174,7 @@ export default {
             })
         },
         uploadImage(e, fieldName, id) {
-            this.form[id][fieldName] = e.target.files[0]
-            console.log(this.form);
+            this.form[id][fieldName] = e.target.files[0];
         }
     }
 }

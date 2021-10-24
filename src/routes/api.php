@@ -23,21 +23,15 @@ use \App\Http\Controllers\ManufacturerController;
 //    return $request->user();
 //});
 
-Route::get('/news', [NewsController::class, 'view'])->name('api.news.view');
-Route::get('/news', [NewsController::class, 'view'])->name('api.news.view');
-
-Route::group(['middleware' => 'role:developer'], function() {
+Route::group(['middleware' => 'role:admin'], function() {
     Route::prefix('/news')->name('api.news.')->group(function () {
-        Route::get('/', [NewsController::class, 'view'])->name('view');
-        Route::get('/get-all', [NewsController::class, 'getAll'])->name('get.all');
-        Route::get('/get/{id}', [NewsController::class, 'get'])->name('get');
+        Route::get('/', [NewsController::class, 'get'])->name('get');
     });
 });
 
 Route::prefix('/category')->name('api.category.')->group(function () {
-    Route::get('/', [CategoryController::class, 'getAll'])->name('get.all');
-    Route::get('/get', [CategoryController::class, 'get'])->name('get');
-    Route::get('/{id}', [CategoryController::class, 'getAllEdit'])->name('get.edit');
+    Route::get('/', [CategoryController::class, 'get'])->name('get');
+    Route::get('/get', [CategoryController::class, 'getNames'])->name('get.names');
 });
 
 Route::prefix('/specification')->name('api.specification.')->group(function () {
@@ -54,6 +48,6 @@ Route::prefix('/manufacturer')->name('api.manufacturer.')->group(function () {
     Route::get('/get', [ManufacturerController::class, 'getNames'])->name('get.names');
 });
 
-Route::middleware(['auth', 'role:developer'])->name('api.user')->prefix('/user')->group(function () {
+Route::middleware(['auth', 'role:admin'])->name('api.user')->prefix('/user')->group(function () {
     Route::get('/', [UserController::class, 'store'])->name('.get');
 });

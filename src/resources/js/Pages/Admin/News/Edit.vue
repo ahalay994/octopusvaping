@@ -38,14 +38,26 @@
 
                     <div class="mb-3">
                         <BreezeLabel value="Изображение" />
-                        <label class="upload-image" for="image" :style="`background-image: url('${data.image}')`" />
-                        <input id="image" type="file" @input="uploadImage($event, 'image')" name="image" ref="image" hidden />
+                        <ImageUploader
+                            id="image"
+                            :images="form.image_url"
+                            :files="form.image"
+                            name="image"
+                            refName="image"
+                            :dirImage="form.dir_image"
+                        />
                     </div>
 
                     <div class="mb-3">
-                        <BreezeLabel value="Превью-изображение" />
-                        <label class="upload-image" for="image-preview" :style="`background-image: url('${data.image_preview}')`" />
-                        <input id="image-preview" type="file" @input="uploadImage($event, 'image_preview')" name="image_preview" ref="image_preview" hidden />
+                        <BreezeLabel for="image_preview" value="Превью-изображение" />
+                        <ImageUploader
+                            id="image_preview"
+                            :images="form.image_preview_url"
+                            :files="form.image_preview"
+                            name="image_preview"
+                            refName="image_preview"
+                            :dirImage="form.dir_image"
+                        />
                     </div>
 
                     <div class="flex items-center justify-end mt-4">
@@ -68,6 +80,7 @@ import BreezeTextarea from "@/Components/Textarea";
 import BreezeLabel from "@/Components/Label";
 import BreezeValidationErrors from "@/Components/ValidationErrors";
 import { BIconChevronLeft } from 'bootstrap-icons-vue';
+import ImageUploader from '@/Components/Admin/ImagesUploader';
 
 export default {
     components: {
@@ -80,10 +93,9 @@ export default {
         Head,
         Link,
         BIconChevronLeft,
+        ImageUploader,
     },
-
     props: ['data'],
-
     data() {
         return {
             form: this.$inertia.form(this.data, {
@@ -102,16 +114,6 @@ export default {
                     }
                 }
             })
-        },
-        uploadImage(e, fieldName) {
-            const file = e.target.files[0];
-            this.form[fieldName] = file;
-
-            let reader = new FileReader
-            reader.onload = e => {
-                this.data[fieldName] = e.target.result
-            }
-            reader.readAsDataURL(file)
         },
     }
 }

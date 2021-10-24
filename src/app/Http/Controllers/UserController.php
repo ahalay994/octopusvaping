@@ -56,7 +56,8 @@ class UserController extends Controller
                 'name' => $user['name'],
                 'email' => $user['email'],
                 'email_verified_at' => $user['email_verified_at'],
-                'role' => $roles[$userRoles[$user['id']]]
+                'role' => $roles[$userRoles[$user['id']]],
+                'role_id' => $userRoles[$user['id']],
             ]);
         }
 
