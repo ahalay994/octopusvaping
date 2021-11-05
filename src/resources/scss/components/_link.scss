@@ -1,0 +1,9 @@
+a {
+    text-decoration: none;
+    font-size: $text-normal;
+    color: $primary;
+
+    &:hover {
+        color: $primaryHover;
+    }
+}

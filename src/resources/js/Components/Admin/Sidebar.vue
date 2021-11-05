@@ -80,6 +80,16 @@ export default {
                         link: 'admin.manufacturer.view',
                         icon: ''
                     },
+                    {
+                        title: 'Адреса магазинов',
+                        link: 'admin.address.view',
+                        icon: ''
+                    },
+                    {
+                        title: 'Страны-производители',
+                        link: 'admin.country.view',
+                        icon: ''
+                    },
                 ]
             },
             {

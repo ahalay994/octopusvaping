@@ -19,4 +19,15 @@ class Specification extends Model
         'created_at',
         'updated_at'
     ];
+
+    public static function getSpecificationsByCatalog($catalogId) {
+        $specifications = self::pluck('name', 'id');
+
+        $catalogSpecificationRelation = CatalogSpecificationRelation::where(['catalog_id' => $catalogId])->get()->toArray();
+        foreach ($catalogSpecificationRelation as $id => $item) {
+            $catalogSpecificationRelation[$id]['specification_name'] = $specifications[$item['specification_id']];
+        }
+
+        return $catalogSpecificationRelation;
+    }
 }

@@ -4,9 +4,11 @@ use App\Http\Controllers\NewsController;
 use \App\Http\Controllers\UserController;
 use \App\Http\Controllers\CategoryController;
 use \App\Http\Controllers\SpecificationController;
+use \App\Http\Controllers\Admin\CountryController;
 use \App\Http\Controllers\CatalogController;
 use \App\Http\Controllers\ManufacturerController;
 use \App\Http\Controllers\SliderController;
+use \App\Http\Controllers\Admin\AddressController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -70,5 +72,20 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
         Route::get('/', [SliderController::class, 'store'])->name('.view');
         Route::post('/save', [SliderController::class, 'save'])->name('.save');
         Route::delete('/delete', [SliderController::class, 'delete'])->name('.delete');
+    });
+
+    Route::name('address')->prefix('/address')->group(function () {
+        Route::get('/', [AddressController::class, 'store'])->name('.view');
+        Route::get('/add', [AddressController::class, 'addView'])->name('.add.view');
+        Route::post('/add', [AddressController::class, 'add'])->name('.add');
+        Route::get('/edit/{id}', [AddressController::class, 'editView'])->name('.edit.view');
+        Route::post('/edit/{id}', [AddressController::class, 'edit'])->name('.edit');
+        Route::delete('/delete/{id}', [AddressController::class, 'delete'])->name('.delete');
+    });
+
+    Route::name('country')->prefix('/country')->group(function () {
+        Route::get('/', [CountryController::class, 'store'])->name('.view');
+        Route::post('/save', [CountryController::class, 'save'])->name('.save');
+        Route::delete('/delete', [CountryController::class, 'delete'])->name('.delete');
     });
 });

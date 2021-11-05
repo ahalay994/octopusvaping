@@ -3,10 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\NewsController;
 use \App\Http\Controllers\SpecificationController;
+use \App\Http\Controllers\Admin\CountryController;
 use \App\Http\Controllers\CatalogController;
 use \App\Http\Controllers\UserController;
 use \App\Http\Controllers\CategoryController;
 use \App\Http\Controllers\ManufacturerController;
+use \App\Http\Controllers\Admin\AddressController;
 use \App\Http\Controllers\SliderController;
 
 /*
@@ -56,4 +58,15 @@ Route::middleware(['auth', 'role:admin'])->name('api.user.')->prefix('/user')->g
 Route::prefix('/slider')->name('api.slider.')->group(function () {
     Route::get('/', [SliderController::class, 'get'])->name('get');
     Route::get('/get', [SliderController::class, 'getNames'])->name('get.names');
+});
+
+Route::group(['middleware' => 'role:admin'], function() {
+    Route::prefix('/address')->name('api.address.')->group(function () {
+        Route::get('/', [AddressController::class, 'get'])->name('get');
+    });
+});
+
+Route::prefix('/country')->name('api.country.')->group(function () {
+    Route::get('/', [CountryController::class, 'get'])->name('get');
+    Route::get('/get', [CountryController::class, 'getNames'])->name('get.names');
 });

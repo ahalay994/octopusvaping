@@ -1,0 +1,18 @@
+h1, .h1 {
+    @include typography($text-h1, 600);
+}
+h2, .h2 {
+    @include typography($text-h2, 600);
+}
+h3, .h3 {
+    @include typography($text-h3, 500);
+}
+h4, .h4 {
+    @include typography($text-h4);
+}
+h5, .h5 {
+    @include typography($text-h5);
+}
+h6, .h6 {
+    @include typography($text-h6);
+}

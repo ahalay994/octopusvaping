@@ -15,13 +15,8 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome');
-});
-
 require __DIR__.'/auth.php';
 
 require __DIR__.'/admin.php';
 
-//Route::get('/roles', [\App\Http\Controllers\PermissionController::class, 'Permission']);
-
+require __DIR__.'/site.php';

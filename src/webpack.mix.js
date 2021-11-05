@@ -19,6 +19,7 @@ mix.js('resources/js/app.js', 'public/js')
         require('autoprefixer'),
     ])
     .sass('resources/scss/index.scss', 'public/css')
+    .sass('resources/scss/front.scss', 'public/css')
     .webpackConfig(require('./webpack.config'));
 
 if (mix.inProduction()) {

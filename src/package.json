@@ -29,10 +29,19 @@
         "vue-loader": "^16.1.2"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-basic-styles": "^31.0.0",
+        "@ckeditor/ckeditor5-build-classic": "^31.0.0",
+        "@ckeditor/ckeditor5-editor-classic": "^31.0.0",
+        "@ckeditor/ckeditor5-essentials": "^31.0.0",
+        "@ckeditor/ckeditor5-link": "^31.0.0",
+        "@ckeditor/ckeditor5-paragraph": "^31.0.0",
+        "@ckeditor/ckeditor5-theme-lark": "^31.0.0",
+        "@ckeditor/ckeditor5-vue": "^2.0.1",
         "@fortawesome/fontawesome-svg-core": "^1.2.36",
         "@fortawesome/free-solid-svg-icons": "^5.15.4",
         "@fortawesome/vue-fontawesome": "^3.0.0-4",
         "@iebh/bootstrap-vue": "^2.21.2",
+        "@tinymce/tinymce-vue": "^4.0.4",
         "@vueform/multiselect": "^2.2.0",
         "@vueform/toggle": "^2.0.1",
         "bootstrap": "^5.1.0",
@@ -40,8 +49,12 @@
         "bootstrap-icons-vue": "^0.7.0",
         "dropzone-vue": "^0.1.10",
         "image-upload-vue": "^0.1.5",
+        "swiper": "^6.8.4",
         "vue-search-select": "^2.9.5",
+        "vue-slick": "^1.1.16",
+        "vue-slick-carousel": "^1.0.6",
         "vue-upload-multiple-image": "^1.1.6",
+        "vue-yandex-maps": "^0.11.0",
         "vue3-image-uploader": "^0.1.3"
     }
 }
