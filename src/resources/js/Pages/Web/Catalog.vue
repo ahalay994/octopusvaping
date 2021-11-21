@@ -1,6 +1,7 @@
 <template>
     <WebLayout>
         <template #default>
+            <Breadcrumb :items="{ category, categoryChild, catalog}" :current="catalog" />
             <div class="max-w-7xl mx-auto py-4">
                 <h1>{{ catalog.name }}</h1>
 
@@ -54,12 +55,14 @@
 import WebLayout from '@/Layouts/Web.vue'
 import {Head, Link} from '@inertiajs/inertia-vue3';
 import Gallery from './Components/Gallery'
+import Breadcrumb from './Components/Breadcrumbs'
 
 export default {
     components: {
         WebLayout,
         Head, Link,
         Gallery,
+        Breadcrumb,
     },
     props: [
         'catalog',
