@@ -1,0 +1,21 @@
+{
+    "name": "alexeymezenin/laravel-russian-slugs",
+    "description": "Russian SEO friendly slugs for Laravel 5",
+    "keywords": ["slugs", "seo", "url", "russian", "cyrillic", "google", "yandex", "translit"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexey Mezenin",
+            "email": "alexeymezenin@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AlexeyMezenin\\LaravelRussianSlugs\\": "src/"
+        }
+    }
+}
