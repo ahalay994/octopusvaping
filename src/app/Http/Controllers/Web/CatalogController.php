@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Catalog;
 use App\Models\Category;
 use Inertia\Inertia;
-use \Illuminate\Http\Request;
-use \Illuminate\Database\QueryException;
 
 class CatalogController extends Controller
 {

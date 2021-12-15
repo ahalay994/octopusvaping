@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Specification;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use \Illuminate\Http\Request;
 use \Illuminate\Database\QueryException;
@@ -22,6 +23,7 @@ class SpecificationController extends Controller
             array_push($data, [
                 'id' => $specification->id,
                 'name' => $specification->name,
+                'slug' => $specification->slug,
                 'state' => 'view',
             ]);
         }
@@ -43,6 +45,7 @@ class SpecificationController extends Controller
             array_push($data, [
                 'id' => $specification->id,
                 'name' => $specification->name,
+                'slug' => $specification->slug,
                 'state' => 'view',
             ]);
         }
@@ -77,12 +80,14 @@ class SpecificationController extends Controller
             if ($specification['id'] === null) {
                 Specification::insert([
                     'name' => $specification['name'],
+                    'slug' => Str::slug($specification['name']),
                     'created_at' => date('Y-m-d H:i:s', time())
                 ]);
             } else {
                 if ($specification['state'] === 'edit') {
                     Specification::where(['id' => $specification['id']])->update([
                         'name' => $specification['name'],
+                        'slug' => Str::slug($specification['name']),
                         'updated_at' => date('Y-m-d H:i:s', time())
                     ]);
                 }
@@ -103,5 +108,14 @@ class SpecificationController extends Controller
         } catch (QueryException $exception) {
             return $exception->errorInfo;
         }
+    }
+
+    public function toArray() {
+        $specifications = Specification::all();
+        $data = [];
+        foreach ($specifications as $specification) {
+            $data[$specification->id] = $specification;
+        }
+        return $data;
     }
 }

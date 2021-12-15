@@ -40,10 +40,12 @@ Route::prefix('/category')->name('api.category.')->group(function () {
 Route::prefix('/specification')->name('api.specification.')->group(function () {
     Route::get('/', [SpecificationController::class, 'get'])->name('get');
     Route::get('/get', [SpecificationController::class, 'getNames'])->name('get.names');
+    Route::get('/get-array', [SpecificationController::class, 'toArray'])->name('get.array');
 });
 
 Route::prefix('/catalog')->name('api.catalog.')->group(function () {
     Route::get('/', [CatalogController::class, 'get'])->name('get');
+    Route::get('/filter', [App\Http\Controllers\Web\CategoryController::class, 'filter'])->name('filter');
 });
 
 Route::prefix('/manufacturer')->name('api.manufacturer.')->group(function () {

@@ -12,6 +12,7 @@ class Specification extends Model
 
     protected $fillable = [
         'id',
+        'slug',
         'name'
     ];
 

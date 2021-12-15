@@ -28,20 +28,47 @@ class Catalog extends Model
         'updated_at',
     ];
 
-    public static function getCatalog($limit = null, $categoryId = null) {
+    public static function getCatalog($categoryId = null, $filter = []) {
         $categories = Category::all();
         $manufacturers = Manufacturer::pluck('name', 'id');
         $categoriesParents = $categories->pluck('parent_id', 'id');
         $categoriesSlugs = $categories->pluck('slug', 'id');
 
-        $data = self::where(['visible' => 1])->orderBy('created_at', 'DESC');
+        $data = self::where([
+                'catalogs.visible' => 1
+            ])
+            ->leftJoin('catalog_specification_relations', 'catalog_specification_relations.catalog_id', '=', 'catalogs.id')
+            ->orderBy('catalogs.created_at', 'DESC');
 
         if ($categoryId !== null) {
-            $data = $data->where(['category_id' => $categoryId]);
+            $data = $data->where(['catalogs.category_id' => $categoryId]);
         }
 
-        if ($limit !== null) {
-            $data = $data->limit($limit);
+        if (count($filter) > 0) {
+            foreach ($filter as $name => $items) {
+                $specification = Specification::where(['slug' => $name])->first();
+
+                if (count($items) > 1) {
+                    foreach ($items as $id => $item) {
+                        if ($id === 0) {
+                            $data = $data->where([
+                                'catalog_specification_relations.specification_id' => $specification->id,
+                                'catalog_specification_relations.value' => $item
+                            ]);
+                        } else {
+                            $data = $data->orWhere([
+                                'catalog_specification_relations.specification_id' => $specification->id,
+                                'catalog_specification_relations.value' => $item
+                            ]);
+                        }
+                    }
+                } else {
+                    $data = $data->where([
+                        'catalog_specification_relations.specification_id' => $specification->id,
+                        'catalog_specification_relations.value' => $items[0]
+                    ]);
+                }
+            }
         }
 
         $data = $data->get()->toArray();

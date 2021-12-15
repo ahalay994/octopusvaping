@@ -50,6 +50,7 @@
         "dropzone-vue": "^0.1.10",
         "image-upload-vue": "^0.1.5",
         "swiper": "^6.8.4",
+        "vue-material-checkbox": "^2.2.0",
         "vue-search-select": "^2.9.5",
         "vue-slick": "^1.1.16",
         "vue-slick-carousel": "^1.0.6",
