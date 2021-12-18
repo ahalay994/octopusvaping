@@ -48,22 +48,22 @@
                                         <div class="mb-3">
                                             <BreezeLabel for="name" value="Заголовок"/>
                                             <BreezeInput id="name" type="text" class="mt-1 block w-full"
-                                                         v-model="form.name"/>
+                                                         v-model="form.name" required/>
                                         </div>
                                         <div class="mb-3">
                                             <BreezeLabel for="short_description" value="Краткое описание"/>
                                             <BreezeTextarea id="short_description" type="text" class="mt-1 block w-full"
-                                                            v-model="form.short_description"/>
+                                                            v-model="form.short_description" required/>
                                         </div>
                                         <div class="mb-3">
                                             <BreezeLabel for="description" value="Описание"/>
                                             <BreezeTextarea id="description" type="text" class="mt-1 block w-full"
-                                                            v-model="form.description"/>
+                                                            v-model="form.description" required/>
                                         </div>
                                         <div class="mb-3">
                                             <BreezeLabel for="price" value="Цена"/>
                                             <BreezeInput id="price" type="text" class="mt-1 block w-full"
-                                                         v-model="form.price"/>
+                                                         v-model="form.price" required/>
                                         </div>
                                         <div class="mb-3">
                                             <BreezeLabel for="price_old" value="Старая цена"/>

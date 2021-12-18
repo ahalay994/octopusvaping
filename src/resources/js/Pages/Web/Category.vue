@@ -117,7 +117,7 @@ export default {
             .then(response => {
                 this.catalogData = response.data;
             })
-        }
+        },
     },
 }
 </script>

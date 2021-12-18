@@ -28,17 +28,19 @@ class Catalog extends Model
         'updated_at',
     ];
 
-    public static function getCatalog($categoryId = null, $filter = []) {
+    public static function getCatalog($limit = null, $categoryId = null, $filter = []) {
         $categories = Category::all();
         $manufacturers = Manufacturer::pluck('name', 'id');
         $categoriesParents = $categories->pluck('parent_id', 'id');
         $categoriesSlugs = $categories->pluck('slug', 'id');
 
-        $data = self::where([
+        $data = self::select('catalogs.*')
+            ->where([
                 'catalogs.visible' => 1
             ])
-            ->leftJoin('catalog_specification_relations', 'catalog_specification_relations.catalog_id', '=', 'catalogs.id')
-            ->orderBy('catalogs.created_at', 'DESC');
+            ->leftJoin('catalog_specification_relations as csr', 'csr.catalog_id', '=', 'catalogs.id')
+            ->orderBy('catalogs.created_at', 'DESC')
+            ->groupBy('catalogs.id');
 
         if ($categoryId !== null) {
             $data = $data->where(['catalogs.category_id' => $categoryId]);
@@ -69,6 +71,10 @@ class Catalog extends Model
                     ]);
                 }
             }
+        }
+
+        if ($limit) {
+            $data = $data->limit($limit);
         }
 
         $data = $data->get()->toArray();

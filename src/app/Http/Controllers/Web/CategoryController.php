@@ -42,17 +42,26 @@ class CategoryController extends Controller
     {
         // Если это категория певого уровня
         if ($slugChild === null) {
-            $getCategory = Category::where(['slug' => $slug])->first();
-            if ($getCategory) {
-                $categoriesChild = Category::where(['parent_id' => $getCategory->id])->get();
-                $catalog = Catalog::getCatalog($getCategory->id);
+            $category = Category::where(['slug' => $slug])->first();
+            // Делаем проверку на существование категории по slug
+            if ($category) {
+                $categoriesChild = Category::where(['parent_id' => $category->id])->get();
+                // Если данная категория родительская и имеет дочерние категории
+                /*if (count($categoriesChild) > 0) {
+
+                } else {
+                    dd(2);
+                }*/
+
+                $catalog = Catalog::getCatalog(null, $category->id);
+
                 foreach ($categoriesChild as $value) {
-                    $catalogChild = Catalog::getCatalog($value->id);
+                    $catalogChild = Catalog::getCatalog(null, $value->id);
                     $catalog = array_merge($catalog, $catalogChild);
                 }
 
                 return Inertia::render('Web/Category', [
-                    'category' => $getCategory,
+                    'category' => $category,
                     'categoriesChild' => $categoriesChild,
                     'catalog' => $catalog,
                     'filter' => self::generateSpecifications($catalog)
@@ -77,7 +86,7 @@ class CategoryController extends Controller
             ]);
         }
 
-        $catalog = Catalog::where(['parent_id' => $getCategory->id])->get();
+        $catalog = Catalog::where(['category_id' => $getCategory->id])->get();
         return Inertia::render('Web/Category', [
             'category' => $getCategory,
             'categoriesChild' => null,
@@ -123,16 +132,15 @@ class CategoryController extends Controller
         $categoryParent = Category::where(['slug' => $path[0]])->first();
         // Если есть дочерняя категория
         if (isset($path[1]) && $path[1] !== '') {
-            $categoryChild = Category::where(['slug' => $path[1]])->get();
+            $categoryChild = Category::where(['slug' => $path[1]])->first();
             // получаем данные только этой категории
-            return Catalog::getCatalog($categoryChild->id, $data);
+            return Catalog::getCatalog(null, $categoryChild->id, $data);
         }
 
-        $catalog = Catalog::getCatalog($categoryParent->id, $data);
+        $catalog = Catalog::getCatalog(null, $categoryParent->id, $data);
         $categoriesChild = Category::where(['parent_id' => $categoryParent->id])->get();
         foreach ($categoriesChild as $value) {
-            dd($value);
-            $catalogChild = Catalog::getCatalog($value->id, $data);
+            $catalogChild = Catalog::getCatalog(null, $value->id, $data);
             $catalog = array_merge($catalog, $catalogChild);
         }
 

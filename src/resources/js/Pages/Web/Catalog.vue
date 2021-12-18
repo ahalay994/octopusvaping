@@ -1,7 +1,7 @@
 <template>
     <WebLayout>
         <template #default>
-            <Breadcrumb :items="{ category, categoryChild, catalog}" :current="catalog" />
+<!--            <Breadcrumb :items="{ category, categoryChild, catalog}" :current="catalog" />-->
             <div class="max-w-7xl mx-auto py-4">
                 <h1>{{ catalog.name }}</h1>
 

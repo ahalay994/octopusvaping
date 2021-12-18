@@ -1,6 +1,6 @@
 <template>
 <div :class="['grid', classWrap]">
-    <Card v-for="item in data" :data="item" :classWrap="classItem" />
+    <Card v-if="data && data.length > 0" v-for="item in data" :data="item" :classWrap="classItem" />
 </div>
 </template>
 
