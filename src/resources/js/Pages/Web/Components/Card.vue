@@ -7,7 +7,7 @@
             <div v-if="data.name.length > 0" class="card-title">{{ data.name }}</div>
             <div v-if="data.manufacturer.length > 0" class="card-manufacturer">Производитель: {{ data.manufacturer }}</div>
             <div v-if="data.short_description.length > 0" class="card-description">{{ data.short_description }}</div>
-            <div v-if="data.price" class="card-price flex align-items-end h-100">{{ data.price.toFixed(2) }} руб.</div>
+            <div v-if="data.price" class="card-price flex align-items-end h-100">{{ parseFloat(data.price).toFixed(2) }} руб.</div>
         </Link>
     </div>
 </template>
