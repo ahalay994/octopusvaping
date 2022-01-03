@@ -50,7 +50,9 @@ function uploadImages(Request $request, String $pathDir)
         foreach ($request->file() as $fieldName => $files) {
             foreach ($files as $file) {
                 $fileName = $file->getClientOriginalName();
+                $pathInfo = pathinfo($fileName);
                 $fullPath = public_path() . DIRECTORY_SEPARATOR . $pathDir;
+                $fileName = $pathInfo['filename'] . (string)time() . '.' . $pathInfo['extension'];
                 $file->move($fullPath, $fileName);
                 ImageOptimizer::optimize($fullPath . $fileName);
 
